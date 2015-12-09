@@ -30,6 +30,7 @@ class QuestionAdmin(admin.ModelAdmin):
                   'was_published_recently')                          #- Select the columns to display in the list
                                                                      #- page.
   list_filter = ['pub_date']                                         #- Adding filter by datetime of publication.
+  search_fields = ['question_text']                                  #- Adding search capabilities.
 
 #admin.site.register(Choice)
 
