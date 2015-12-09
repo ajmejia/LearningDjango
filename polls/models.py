@@ -1,4 +1,7 @@
+import datetime
+
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 #---------------------------------------------------------------
@@ -19,9 +22,17 @@ class Question(models.Model):
   pub_date = models.DateTimeField("date published")  #- First positional arg handles the human-readable name
                                                      #- of the field. This defaults to the name of the
                                                      #- variable in machine-readable format.
+  def __unicode__(self):
+    return self.question_text                        #- A human-readable representation of the Question object.
+
+  def was_published_recently(self):                  #- Another method for handling publication date (?).
+    return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
 
 class Choice(models.Model):
   question = models.ForeignKey(Question)             #- The ForeignKey tells django that each Choice is related
                                                      #- to a single Question (many-to-one).
   choice_text = models.CharField(max_length=200)     #- Another CharField
   votes = models.IntegerField(default=0)             #- An IntegerField with default value of 0.
+
+  def __unicode__(self):
+    return self.choice_text

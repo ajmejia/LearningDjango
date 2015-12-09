@@ -106,7 +106,7 @@ DATABASES = {
 LANGUAGE_CODE = 'en-us'
 
 #- Set my timezone here!
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Caracas'
 
 USE_I18N = True
 
