@@ -28,6 +28,12 @@ class Question(models.Model):
   def was_published_recently(self):                  #- Another method for handling publication date (?).
     return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
 
+                                                                   #- This is probably telling how to treat this method
+                                                                   #- as a field. Like a custom field.
+  was_published_recently.admin_order_field = 'pub_date'            #- Custom order field when request ordering by this one.
+  was_published_recently.boolean = True                            #- Tells the renderer this is a boolean field.
+  was_published_recently.short_description = 'Published recently?' #- Short human-readable name.
+
 class Choice(models.Model):
   question = models.ForeignKey(Question)             #- The ForeignKey tells django that each Choice is related
                                                      #- to a single Question (many-to-one).
