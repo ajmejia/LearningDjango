@@ -13,18 +13,22 @@ from .models import Choice, Question
 #- what happens with the models a registered by defining a
 #- class.
 #---------------------------------------------------------------
-class ChoiceInline(admin.StackedInline):
+class ChoiceInline(admin.TabularInline):
   model = Choice
-  extra = 3                                                         #- This way I can add a bunch of choices at once.
+  extra = 3                                                          #- This way I can add a bunch of choices at once.
 
 class QuestionAdmin(admin.ModelAdmin):
   fieldsets = [
-               (None,               {'fields': ['question_text']}), #- I can group fields within div tags using this
-                                                                    #- formatting. Can also define collapsed groups
-               ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}), #- as in here.
+               (None,               {'fields':  ['question_text']}), #- I can group fields within div tags using this
+                                                                     #- formatting. Can also define collapsed groups
+               ('Date information', {'fields':  ['pub_date'],
+                                     'classes': ['collapse']}),      #- as in here.
               ]
-  inlines = [ChoiceInline]                                          #- Plus, the choices will be added/edited in the
-                                                                    #- question page.
+  inlines = [ChoiceInline]                                           #- Plus, the choices will be added/edited in the
+                                                                     #- question page.
+  list_display = ('question_text', 'pub_date',
+                  'was_published_recently')                          #- Select the columns to display in the list
+                                                                     #- page.
 
 #admin.site.register(Choice)
 
