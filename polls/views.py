@@ -11,9 +11,12 @@ from django.shortcuts import render
 #-    * vote
 #---------------------------------------------------------------
 from django.http import HttpResponse
+from .models import Question
 
 def index(request):
-  return HttpResponse("Hello, world. You're at the polls index.")
+  latest_question_list = Question.objects.order_by('-pub_date')[:5]   #- show latest 5 questions
+  output = ', '.join([p.question_text for p in latest_question_list])
+  return HttpResponse(output)
 
 def detail(request, question_id):
   return HttpResponse("You're looking at question %s."%question_id)
