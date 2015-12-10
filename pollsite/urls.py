@@ -14,7 +14,8 @@ urlpatterns = [
     #-    + name: name usde to reference across templates.
     #-----------------------------------------------------------
 
-    url(r'^polls/', include('polls.urls')),                #- The ^polls/ patterns are handled by
-                                                           #- the polls.urls.
+    url(r'^polls/', include('polls.urls',           #- The ^polls/ patterns are handled by polls.urls.
+                            namespace='polls')),    #- The namespace is used to differenciate between
+                                                    #- views with the same name but different app.
     url(r'^admin/', include(admin.site.urls)),
 ]

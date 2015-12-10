@@ -1,0 +1,12 @@
+{% if latest_question_list %}
+  <ul>
+    {% for question in latest_question_list %}
+      <!-- This url tag works wonderfully with my url definitions!
+           Plus with the pulls key 'polls' there can be several 'detail'
+           names on several applications. -->
+      <li><a href='{% url "polls:detail"  question.id %}'>{{ question.question_text }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No polls are available.</p>
+{% endif %}
