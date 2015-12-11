@@ -1,17 +1,29 @@
-<!-- This will load the static tag used below to target the css file -->
-{% load staticfiles %}
+<!DOCTYPE HTML>
+<html lang='eng'>
+  <head>
+    <title>Recent Polls</title>
+    <!-- This will load the static tag used below to target the css file -->
+    {% load staticfiles %}
+    <link rel='stylesheet' type='text/css' href="{% static 'polls/normalize.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'polls/style.css' %}" />
+  </head>
 
-<link rel='stylesheet', type='text/css' href="{% static 'polls/style.css' %}" />
+  <body>
+    <h1>Recent Polls</h1>
+    <div>
+      {% if latest_question_list %}
+        <!-- This url tag works wonderfully with my url definitions!
+             Plus with the pulls key 'polls' there can be several 'detail'
+             names on several applications. -->
+        <ul>
+          {% for question in latest_question_list %}
+            <li><a href='{% url "polls:detail"  question.id %}'>{{ question.question_text }}</a></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No polls are available.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
 
-{% if latest_question_list %}
-  <ul>
-    {% for question in latest_question_list %}
-      <!-- This url tag works wonderfully with my url definitions!
-           Plus with the pulls key 'polls' there can be several 'detail'
-           names on several applications. -->
-      <li><a href='{% url "polls:detail"  question.id %}'>{{ question.question_text }}</a></li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No polls are available.</p>
-{% endif %}
