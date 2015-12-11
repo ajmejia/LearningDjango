@@ -26,7 +26,8 @@ class Question(models.Model):
     return self.question_text                        #- A human-readable representation of the Question object.
 
   def was_published_recently(self):                  #- Another method for handling publication date (?).
-    return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+    now = timezone.now()
+    return now - datetime.timedelta(days=1) <= self.pub_date <= now
 
                                                                    #- This is probably telling how to treat this method
                                                                    #- as a field. Like a custom field.
