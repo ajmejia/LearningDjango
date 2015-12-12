@@ -1,0 +1,24 @@
+<h1>Sign Up</h1>
+
+<div class="flash-message-container">{{ form.non_field_errors }}</div>
+<form action="{% url 'polls:signup' %}" method="post">
+	{% csrf_token %}
+	<div class="fieldWrapper">
+		<label for="{{ form.username.id_for_label }}">Username: </label>
+		<p>{{ form.username }} <span class="form-field-error">{{ form.username.errors }}</span></p>
+	</div>
+	<div class="fieldWrapper">
+		<label for="{{ form.email.id_for_label }}">Email: </label>
+		<p>{{ form.email }} <span class="form-field-error">{{ form.email.errors }}</span></p>
+	</div>
+	<div class="fieldWrapper">
+		<label for="{{ form.password1.id_for_label }}">Password: </label>
+		<p>{{ form.password1 }} <span class="form-field-error">{{ form.password1.errors }}</span></p>
+	</div>
+		<div class="fieldWrapper">
+		<label for="{{ form.password2.id_for_label }}">Password confirmation: </label>
+		<p>{{ form.password2 }} <span class="form-field-error">{{ form.password2.errors }}</span></p>
+	</div>
+	<input type="submit" value="sign up"/>
+</form>
+

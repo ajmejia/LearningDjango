@@ -33,9 +33,9 @@ ALLOWED_HOSTS = []
 #- Default django applications to be used within this project.
 #- See comments below:
 INSTALLED_APPS = (
-    'django.contrib.admin',         #- Admin site for developers
-    'django.contrib.auth',          #- An authentication system
-    'django.contrib.contenttypes',  #- A framework for content types         (?)
+    'django.contrib.admin',         #- Admin site for developers.
+    'django.contrib.auth',          #- An authentication system.
+    'django.contrib.contenttypes',  #- Allows permissions to be associated with models.
     'django.contrib.sessions',      #- A session framework                   (?)
     'django.contrib.messages',      #- A messaging framework                 (?)
     'django.contrib.staticfiles',   #- A framework for managing static files (?)
@@ -51,11 +51,11 @@ INSTALLED_APPS = (
 #---------------------------------------------------------------
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',            #- manages sessions across requests.
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',         #- associates users with requests using sessions.
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',  #- logs users out after changing the password.
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
