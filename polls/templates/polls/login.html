@@ -1,7 +1,13 @@
 <h1>Sign In</h1>
 
-<div class="flash-message-container">{{ form.non_field_errors }}</div>
-<form action="{% url 'polls:signin' %}" method="post">
+<div class="flash-message-container">
+	{% with flash_messages=form.non_field_errors|add:messages %}
+		{% for message in flash_messages %}
+			<p class="{{ message.tags }}">{{ message }}</p>
+		{% endfor %}
+	{% endwith %}
+</div>
+<form action="{% url 'polls:login' %}" method="post">
 	{% csrf_token %}
 	<div class="fieldWrapper">
 		<label for="{{ form.username.id_for_label }}">Username: </label>

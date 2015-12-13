@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.messages import get_messages
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 
-from django.views import generic
+from django.views.generic import RedirectView, ListView, DetailView
+from django.views.generic.edit import FormView
 from django.utils import timezone
-from django import forms
 
-from .models import Choice, Question
-from django.forms.utils import ErrorList
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
+from .models import User, Choice, Question
+from .forms import SpanErrorList, SignUpForm, LogInForm
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
 
 # Create your views here.
 #---------------------------------------------------------------
@@ -35,119 +36,87 @@ from django.contrib.auth import authenticate, login, logout
 #- render from django.shortcuts. The implementation goes as
 #- follows.
 #---------------------------------------------------------------
-USERNAME_MAX_LENGTH = 10
-EMAIL_MAX_LENGTH = 50
-PASSWORD_MIN_LENGTH = 7
+class SignupView(FormView):
+	template_name = 'polls/signup.html'
+	form_class = SignUpForm
+	success_url = 'polls:index'
 
-class SpanErrorList(ErrorList):
-
-	def __unicode__(self):
-		return self.as_span()
-		
-	def as_span(self):
-		if not self: return ""
-		return " ".join([e for e in self])
-
-class SignUpForm(forms.Form):
-
-	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
-	email = forms.EmailField(max_length=EMAIL_MAX_LENGTH)
-	password1 = forms.CharField(label='Password', min_length=PASSWORD_MIN_LENGTH, widget=forms.PasswordInput)
-	password2 = forms.CharField(label='Confirm password', min_length=PASSWORD_MIN_LENGTH, widget=forms.PasswordInput)
-
-	def clean_username(self):
-		data = self.cleaned_data['username']
-		try:
-			user = User.objects.get(username=data)
-			raise forms.ValidationError('This username was already taken.')
-		except User.DoesNotExist:
-			return data
-
-	def clean_password2(self):
-		data1 = self.cleaned_data['password1']
-		data2 = self.cleaned_data['password2']
-		if data1 and data2 and data1 != data2: raise forms.ValidationError('Passwords do not match.')
-		return data2
-
-	def clean_email(self):
-		data = self.cleaned_data['email']
-		try:
-			user = User.objects.get(email=data)
-			raise forms.ValidationError('This email is already in use.')
-		except User.DoesNotExist:
-			return data
-
-class SignInForm(forms.Form):
-	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
-	password = forms.CharField(label='Password', min_length=PASSWORD_MIN_LENGTH, widget=forms.PasswordInput)
-
-
-def signup(request):
-	if request.method == 'GET':
-		form = SignUpForm()
-		return render(request, 'polls/signup.html', {'form': form})
-	elif request.method == 'POST':
-		form = SignUpForm(request.POST, error_class=SpanErrorList)
-		if form.is_valid():
-			username = form.cleaned_data['username']
-			email = form.cleaned_data['email']
-			password = form.cleaned_data['password1']
-			
-			new_user = User.objects.create_user(username, email, password)#, pk=username)
-			new_user.save()
-			
-			new_user = authenticate(username=new_user.username, password=request.POST['password1'])
-			if new_user.is_active:
-				login(request, new_user)
-
-				messages.add_message(request, messages.SUCCESS, 'Welcome aboard!')
-				return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'user': new_user, 'success_message': 'Welcome aboard!',}))
+	def get_form_kwargs(self):
+		if self.request.method == "POST":
+			return dict(data=self.request.POST, error_class=SpanErrorList)
 		else:
-			return render(request, 'polls/signup.html', {'form': form})
+			return dict()
 
-def signin(request):
-	if request.method == "GET":
-		form = SignInForm()
-		return render(request, 'polls/signin.html', {'form': form})
-	elif request.method == "POST":
-		form = SignInForm(request.POST, error_class=SpanErrorList)
-		if form.is_valid():
-			user = authenticate(username=request.POST['username'], password=request.POST['password'])
-			if user != None:
-				if user.is_active:
-					login(request, user)
+	def form_valid(self, form):
+		username = form.cleaned_data['username']
+		email = form.cleaned_data['email']
+		password = form.cleaned_data['password1']
 
-					messages.add_message(request, messages.SUCCESS, 'Welcome back!')
-					return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'success_message': 'Welcome back!'}))
-				else:
-					messages.add_message(request, messages.ERROR, 'Your account has been disabled from this site.')
-					return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'error_message': 'Your account has been disabled from this site.'}))
+		new_user = User.objects.create_user(username, email, password)#, pk=username)
+		new_user.save()
+
+		new_user = authenticate(username=new_user.username, password=self.request.POST['password1'])
+		if new_user.is_active:
+			login(self.request, new_user)
+
+			messages.add_message(self.request, messages.SUCCESS, 'Welcome aboard!')
+			return redirect(self.success_url)
+
+class LoginView(FormView):
+	template_name = 'polls/login.html'
+	form_class = LogInForm
+	success_url = 'polls:index'
+	error_url = 'polls:index'
+
+	def get_form_kwargs(self):
+		if self.request.method == "POST":
+			return dict(data=self.request.POST, error_class=SpanErrorList)
+		else:
+			return dict()
+	
+	def form_valid(self, form):
+		user = authenticate(username=self.request.POST['username'], password=self.request.POST['password'])
+		if user != None:
+			if user.is_active:
+				login(self.request, user)
+				
+				messages.add_message(self.request, messages.SUCCESS, 'Welcome back!')
+				return redirect(self.success_url)
 			else:
-				messages.add_message(request, messages.ERROR, 'Invalid username/password, try again.')
-				return redirect(reverse('polls:signin'))#, context_instance=RequestContext(request, {'error_message': 'Invalid username/password, try again.'}))
+				messages.add_message(request, messages.ERROR, 'Sorry, your account has been disabled from this site.')
+				return redirect(self.error_url)
+		else:
+			messages.add_message(self.request, messages.ERROR, 'Invalid username/password, try again.')
+			return redirect('polls:login')
 
-def signout(request):
-	logout(request)
+class LogoutView(RedirectView):
+	pattern_name = 'index'
+	query_string = False
 
-	messages.add_message(request, messages.SUCCESS, 'See you soon!')
-	return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'success_message': 'See you soon!'}))
+	def get_redirect_url(self, *args, **kwargs):
+		try:
+			logout(self.request)
+			messages.add_message(self.request, messages.SUCCESS, 'See you soon!')
+		except:
+			messages.add_message(self.request, messages.ERROR, 'Could not logout current user.')
+		finally:
+			return reverse('polls:index')
 
-
-class IndexView(generic.ListView):
+class IndexView(ListView):
   template_name = 'polls/index.html'
   context_object_name = 'latest_question_list'
 
   def get_queryset(self):
     return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
 
-class DetailView(generic.DetailView):
+class DetailView(DetailView):
   model = Question
   template_name = 'polls/detail.html'
 
   def get_queryset(self):
     return Question.objects.filter(pub_date__lte=timezone.now())
 
-class ResultsView(generic.DetailView):
+class ResultsView(DetailView):
   model = Question
   template_name = 'polls/results.html'
 

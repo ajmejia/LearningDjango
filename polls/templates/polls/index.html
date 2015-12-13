@@ -14,10 +14,10 @@
     	<ul class="nav-bar nav-bar-btn">
     	{% if user.is_authenticated %}
 	    	<li>{{ user.username }}</li>
-		   	<li><a href="{% url 'polls:signout' %}">sign out</a></li>
+		   	<li><a href="{% url 'polls:logout' %}">Sign out</a></li>
 		  {% else %}
-		  	<li><a href="{% url 'polls:signup' %}">sign up</a></li>
-		   	<li><a href="{% url 'polls:signin' %}">sign in</a></li>
+		  	<li><a href="{% url 'polls:signup' %}">Sign up</a></li>
+		   	<li><a href="{% url 'polls:login' %}">Sign in</a></li>
 		  {% endif %}
     	</ul>
     </div>

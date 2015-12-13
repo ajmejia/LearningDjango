@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',          #- An authentication system.
     'django.contrib.contenttypes',  #- Allows permissions to be associated with models.
     'django.contrib.sessions',      #- A session framework                   (?)
-    'django.contrib.messages',      #- A messaging framework                 (?)
+    'django.contrib.messages',      #- Allows using flash-massaging across views (recommended with redirect requests)
     'django.contrib.staticfiles',   #- A framework for managing static files (?)
     'polls'                         #- This is the application I created to handle the polls.
 )
