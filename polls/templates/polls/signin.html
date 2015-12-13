@@ -1,9 +1,15 @@
-<h1>Sign Up</h1>
+<h1>Sign In</h1>
 
-<form action="{% url 'polls:index' %}" method='post'>
+<div class="flash-message-container">{{ form.non_field_errors }}</div>
+<form action="{% url 'polls:signin' %}" method="post">
 	{% csrf_token %}
-	<p>username: <input type='text' name='username' id='username' maxlength=10 value="{{ username }}"/></p>
-	<p>password: <input type='password' name='password' id='password' maxlength=20 value="{{ password }}"/></p>
-	</br>
-	<input type='submit' value="sign in"/>
+	<div class="fieldWrapper">
+		<label for="{{ form.username.id_for_label }}">Username: </label>
+		<p>{{ form.username }} <span class="form-field-error">{{ form.username.errors }}</span></p>
+	</div>
+	<div class="fieldWrapper">
+		<label for="{{ form.password.id_for_label }}">Password: </label>
+		<p>{{ form.password }} <span class="form-field-error">{{ form.password.errors }}</span></p>
+	<input type="submit" value="sign in"/>
 </form>
+

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
+from django.template import RequestContext
 from django.core.urlresolvers import reverse
 
 from django.views import generic
@@ -9,7 +9,7 @@ from django import forms
 from .models import Choice, Question
 from django.forms.utils import ErrorList
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 #---------------------------------------------------------------
@@ -18,12 +18,13 @@ from django.contrib.auth import authenticate, login
 #- views:
 #-    * signup
 #-    * login
+#-    * logout
 #-    * index
 #-    * detail
 #-    * results
 #-    * vote
 #-
-#- For using the template facilities the import RequestConext
+#- For using the template facilities the import RequestContext
 #- and loader is nedeed. The first class is used to import
 #- the actual template (html file) into the template variable.
 #- The second is used built the context object (html+request)
@@ -33,6 +34,9 @@ from django.contrib.auth import authenticate, login
 #- render from django.shortcuts. The implementation goes as
 #- follows.
 #---------------------------------------------------------------
+USERNAME_MAX_LENGTH = 10
+EMAIL_MAX_LENGTH = 50
+PASSWORD_MIN_LENGTH = 7
 
 class SpanErrorList(ErrorList):
 
@@ -44,9 +48,6 @@ class SpanErrorList(ErrorList):
 		return " ".join([e for e in self])
 
 class SignUpForm(forms.Form):
-	USERNAME_MAX_LENGTH = 10
-	EMAIL_MAX_LENGTH = 50
-	PASSWORD_MIN_LENGTH = 7
 
 	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
 	email = forms.EmailField(max_length=EMAIL_MAX_LENGTH)
@@ -75,42 +76,51 @@ class SignUpForm(forms.Form):
 		except User.DoesNotExist:
 			return data
 
+class SignInForm(forms.Form):
+	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
+	password = forms.CharField(label='Password', min_length=PASSWORD_MIN_LENGTH, widget=forms.PasswordInput)
+
+
 def signup(request):
 	if request.method == 'GET':
 		form = SignUpForm()
 		return render(request, 'polls/signup.html', {'form': form})
-	if request.method == 'POST':
+	elif request.method == 'POST':
 		form = SignUpForm(request.POST, error_class=SpanErrorList)
 		if form.is_valid():
 			username = form.cleaned_data['username']
 			email = form.cleaned_data['email']
 			password = form.cleaned_data['password1']
 			
-			new_user = User.objects.create_user(username, email, password)
+			new_user = User.objects.create_user(username, email, password)#, pk=username)
 			new_user.save()
 			
 			new_user = authenticate(username=new_user.username, password=request.POST['password1'])
-			login(request, new_user)
-			return redirect(reverse('polls:index'), context={
-			                                                 'user': new_user,
-			                                                 'success-message': 'Welcome aboard!',
-			                                                }
-			               )
+			if new_user.is_active: login(request, new_user)
+			return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'user': new_user, 'success_message': 'Welcome aboard!',}))
 		else:
 			return render(request, 'polls/signup.html', {'form': form})
 
 def signin(request):
-	user = authenticate(username=request.POST['username'],
-	                    password=request.POST['password'],
-	                   )
-	if user is not None:
-		if user.is_active:
-			login(request, user)
-			return HttpResponseRedirect(reverse('polls:index'))
-		else:
-			return HttpResponseRedirect(reverse('polls:index'))
-	else:
-		return HttpResponseRedirect(reverse('polls:index'))
+	if request.method == "GET":
+		form = SignInForm()
+		return render(request, 'polls/signin.html', {'form': form})
+	elif request.method == "POST":
+		form = SignInForm(request.POST, error_class=SpanErrorList)
+		if form.is_valid():
+			user = authenticate(username=request.POST['username'], password=request.POST['password'])
+			if user is not None:
+				if user.is_active:
+					login(request, user)
+					return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'success_message': 'Welcome back!'}))
+				else:
+					return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'error_message': 'Your account has been disabled from this site.'}))
+			else:
+				return redirect(reverse('polls:signin'))#, context_instance=RequestContext(request, {'error_message': 'Invalid username/password, try again.'}))
+
+def signout(request):
+	logout(request)
+	return redirect(reverse('polls:index'), context_instance=RequestContext(request, {'success_message: See you soon!'}))
 
 
 class IndexView(generic.ListView):
@@ -118,7 +128,6 @@ class IndexView(generic.ListView):
   context_object_name = 'latest_question_list'
 
   def get_queryset(self):
-    #return Question.objects.order_by('-pub_date')[:5]
     return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
 
 class DetailView(generic.DetailView):
@@ -135,42 +144,23 @@ class ResultsView(generic.DetailView):
   def get_queryset(self):
     return Question.objects.filter(pub_date__lte=timezone.now())
 
-#def index(request):
-#  latest_question_list = Question.objects.order_by('-pub_date')[:5]      #- select latest 5 questions.
-#  context = {'latest_question_list': latest_question_list}
-#  return render(request, 'polls/index.html', context)                    #- renders the requested template
-#                                                                         #- with the defined context.
-#
-#def detail(request, question_id):
-#  #- This block:
-#  #-    try:
-#  #-      question = Question.objects.get(pk=question_id)
-#  #-    except Question.DoesNotExist:
-#  #-      raise Http404('Question does not exist.')                      #- Handle the Question.DoesNotExist exception with a code 404.
-#  #- can just be rewritten as:
-#  question = get_object_or_404(Question, pk=question_id)
-#  return render(request, 'polls/detail.html', {'question': question})
-#
-#def results(request, question_id):
-#  question = get_object_or_404(Question, pk=question_id)
-#  return render(request, 'polls/results.html', {'question': question})
 
 def vote(request, question_id):
   p = get_object_or_404(Question, pk=question_id)
   try:
-    selected_choice = p.choice_set.get(pk=request.POST['choice'])        #- The request.POST is a dictionary-like object that maps the submitted
-                                                                         #- data through the post method.
+    selected_choice = p.choice_set.get(pk=request.POST['choice'])         #- The request.POST is a dictionary-like object that maps the submitted
+                                                                          #- data through the post method.
   except KeyError, Choice.DoesNotExist:
     return render(request, 'polls/detail.html', {
                   'question': p,
-                  'error_message': "You didn't setect a choice.",        #- This there is no option selected upon submitting, a KeyError will be raised
-                                                                         #- and the detail template will be rendered with a error message.
+                  'error_message': "You didn't setect a choice.",         #- This there is no option selected upon submitting, a KeyError will be raised
+                                                                          #- and the detail template will be rendered with a error message.
                   })
   else:
     selected_choice.votes += 1
     selected_choice.save()
-    return HttpResponseRedirect(reverse('polls:results', args=(p.id,)))  #- Since the page we want to redirect to has a variable url, I used the
-                                                                         #- reverse method to give the view (instead of the url) and the variable
-                                                                         #- part (p.id).
+    return redirect(reverse('polls:results', args=(p.id,)))               #- Since the page we want to redirect to has a variable url, I used the
+                                                                          #- reverse method to give the view (instead of the url) and the variable
+                                                                          #- part (p.id).
 
 
