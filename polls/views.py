@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template import RequestContext
+from django.contrib import messages
+from django.contrib.messages import get_messages
 from django.core.urlresolvers import reverse
 
 from django.views import generic
@@ -96,8 +97,11 @@ def signup(request):
 			new_user.save()
 			
 			new_user = authenticate(username=new_user.username, password=request.POST['password1'])
-			if new_user.is_active: login(request, new_user)
-			return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'user': new_user, 'success_message': 'Welcome aboard!',}))
+			if new_user.is_active:
+				login(request, new_user)
+
+				messages.add_message(request, messages.SUCCESS, 'Welcome aboard!')
+				return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'user': new_user, 'success_message': 'Welcome aboard!',}))
 		else:
 			return render(request, 'polls/signup.html', {'form': form})
 
@@ -109,18 +113,24 @@ def signin(request):
 		form = SignInForm(request.POST, error_class=SpanErrorList)
 		if form.is_valid():
 			user = authenticate(username=request.POST['username'], password=request.POST['password'])
-			if user is not None:
+			if user != None:
 				if user.is_active:
 					login(request, user)
+
+					messages.add_message(request, messages.SUCCESS, 'Welcome back!')
 					return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'success_message': 'Welcome back!'}))
 				else:
+					messages.add_message(request, messages.ERROR, 'Your account has been disabled from this site.')
 					return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'error_message': 'Your account has been disabled from this site.'}))
 			else:
+				messages.add_message(request, messages.ERROR, 'Invalid username/password, try again.')
 				return redirect(reverse('polls:signin'))#, context_instance=RequestContext(request, {'error_message': 'Invalid username/password, try again.'}))
 
 def signout(request):
 	logout(request)
-	return redirect(reverse('polls:index'), context_instance=RequestContext(request, {'success_message: See you soon!'}))
+
+	messages.add_message(request, messages.SUCCESS, 'See you soon!')
+	return redirect(reverse('polls:index'))#, context_instance=RequestContext(request, {'success_message': 'See you soon!'}))
 
 
 class IndexView(generic.ListView):

@@ -13,7 +13,7 @@
     <div>
     	<ul class="nav-bar nav-bar-btn">
     	{% if user.is_authenticated %}
-	    	<li>Hi, {{ user.username }}!</li>
+	    	<li>{{ user.username }}</li>
 		   	<li><a href="{% url 'polls:signout' %}">sign out</a></li>
 		  {% else %}
 		  	<li><a href="{% url 'polls:signup' %}">sign up</a></li>
@@ -22,10 +22,10 @@
     	</ul>
     </div>
     <div class="flash-message-container">
-			{% if error_message %}
-				<p class="flash-message-error">{{ error_message }}</p>
-			{% elif success_message %}
-				<p class="flash-message-success">{{ success_message }}</p>
+      {% if messages %}
+				{% for message in messages %}
+					<p class="{{ message.tags }}">{{ message }}</p>
+				{% endfor %}
 			{% endif %}
     </div>
     </br>
