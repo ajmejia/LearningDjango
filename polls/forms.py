@@ -49,11 +49,10 @@ class LogInForm(forms.Form):
 	password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
 class ChoiceForm(forms.Form):	
+	choice_text = forms.ChoiceField(choices=[], widget=forms.RadioSelect)
 	
-	def __init__(self, *args, **kwargs):
-		self.choices = kwargs.pop('choices')
-		self.choices = zip(range(1, len(self.choices)+1), self.choices)
-		super(ChoiceForm, self).__init__(*args, **kwargs)
+	def set_question_text(self, question):
+		self.question_text = question.question_text
 
-		self.choice_text = forms.ChoiceField(choices=self.choices, widget=forms.RadioSelect)
-		
+	def set_question_pk(self, question):
+		self.question_pk = question.pk

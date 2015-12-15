@@ -1,4 +1,4 @@
-<h1>{{ question.question_text }}</h1>
+<h1>{{ form.question_text }}</h1>
 
 <div class="flash-message-container">
 	{% with flash_messages=form.choice_text.error_messages|add:messages %}
@@ -7,16 +7,8 @@
 		{% endfor %}
 	{% endwith %}
 </div>
-<form action="{% url 'polls:vote' question.pk %}" method="post">
+<form action="{% url 'polls:vote' form.question_pk %}" method="post">
 	{% csrf_token %}
-<!--	{% with choices=form.choice_text.choice_text_choices %}-->
-<!--			<div class="fieldWrapper">-->
-<!--		{% for choice in choices %}-->
-<!--<!--				<p>{{ form.choice_text.widget }}<label for="choice{{ forloop.counter }}">{{ choice }}</label></p>-->-->
-<!--				{{ choice }}-->
-<!--			</div>-->
-<!--		{% endfor %}-->
-<!--	{% endwith %}-->
-	{{ form.choice_text.choice_text_choices }}
+	{{ form.as_p }}
 	<input type="submit" value="Vote"/>
 </form>

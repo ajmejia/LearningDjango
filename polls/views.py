@@ -60,7 +60,7 @@ class SignupView(FormView):
 			login(self.request, new_user)
 
 			messages.add_message(self.request, messages.SUCCESS, 'Welcome aboard!')
-			return redirect(self.success_url)
+			return redirect(self.success_url, permanent=False)
 
 class LoginView(FormView):
 	template_name = 'polls/login.html'
@@ -81,13 +81,13 @@ class LoginView(FormView):
 				login(self.request, user)
 				
 				messages.add_message(self.request, messages.SUCCESS, 'Welcome back!')
-				return redirect(self.success_url)
+				return redirect(self.success_url, permanent=False)
 			else:
 				messages.add_message(self.request, messages.ERROR, 'Sorry, your account has been disabled from this site.')
-				return redirect(self.error_url)
+				return redirect(self.error_url, permanent=False)
 		else:
 			messages.add_message(self.request, messages.ERROR, 'Invalid username/password, try again.')
-			return redirect('polls:login')
+			return redirect('polls:login', permanent=False)
 
 class LogoutView(RedirectView):
 	pattern_name = 'index'
@@ -125,57 +125,39 @@ class ResultsView(DetailView):
 
 class VoteView(FormView):
 
-	def __init__(self, *args, **kwargs):
-		super(VoteView, self).__init__(*args, **kwargs)
+	template_name = 'polls/vote.html'
+	form_class = ChoiceForm
+	success_url = 'polls:results'
+	error_url = 'polls:vote'
 
-		self.template_name = 'polls/vote.html'
-		self.form_class = ChoiceForm
-		self.success_url = 'polls:results'
-		self.error_url = 'polls:vote'
-
-		self.question = get_object_or_404(Question, pk=2)                # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OJO!!
+	def get(self, request, pk, *args, **kwargs):
+		self.question = get_object_or_404(Question, pk=pk)
 		self.choices = self.question.choice_set.all()
-		self.labels = [c.choice_text for c in self.choices]
+		self.labels = [(i, c.choice_text) for i, c in enumerate(self.choices)]
+		return super(VoteView, self).get(request, pk)
 		
-	def get(self, self.request):
-		return render(self.request, self.template_name, {'question': self.question})
+	def post(self, request, pk, *args, **kwargs):
+		self.question = get_object_or_404(Question, pk=pk)
+		self.choices = self.question.choice_set.all()
+		self.labels = [(i, c.choice_text) for i, c in enumerate(self.choices)]
+		return super(VoteView, self).post(request, pk)
 
 	def get_form_kwargs(self):
-		kwargs = super(VoteView, self).get_form_kwargs()
-		kwargs.update({'choices': self.labels})
-		print kwargs
 		if self.request.method == "GET":
-			return dict(data={}, choices=self.labels)
+			return dict()
 		else:
-			return dict(data=self.request.POST, error_class=SpanErrorList, choices=self.labels)
+			return dict(data=self.request.POST, error_class=SpanErrorList)
+
+	def get_form(self, *args, **kwargs):
+		kwargs.update(self.get_form_kwargs())
+		form = self.form_class(*args, **kwargs)
+		form.fields['choice_text'].choices = self.labels
+		form.set_question_text(self.question)
+		form.set_question_pk(self.question)
+		return form
 
 	def form_valid(self, form):
-		try:
-			selected_choice = self.question.choice_set.get(pk=self.request.POST['choice'])
-		except KeyError, selected_choice.DoesNotExist:
-			messages.add_message(self.request, messages.ERROR, 'You must select one option to vote.')
-			return redirect(reverse(self.error_url, kwargs={'form': form, 'pk': self.question.pk}))
-
+		selected_choice = self.choices[int(form.cleaned_data['choice_text'])]
 		selected_choice.votes += 1
 		selected_choice.save()
-		return redirect(reverse(self.success_url, kwargs={'form': form, 'pk': self.question.pk}))
-
-#def vote(request, question_id):
-#  p = get_object_or_404(Question, pk=question_id)
-#  try:
-#    selected_choice = p.choice_set.get(pk=request.POST['choice'])         #- The request.POST is a dictionary-like object that maps the submitted
-#                                                                          #- data through the post method.
-#  except KeyError, Choice.DoesNotExist:
-#    return render(request, 'polls/detail.html', {
-#                  'question': p,
-#                  'error_message': "You didn't setect a choice.",         #- This there is no option selected upon submitting, a KeyError will be raised
-#                                                                          #- and the detail template will be rendered with a error message.
-#                  })
-#  else:
-#    selected_choice.votes += 1
-#    selected_choice.save()
-#    return redirect(reverse('polls:results', args=(p.id,)))               #- Since the page we want to redirect to has a variable url, I used the
-                                                                          #- reverse method to give the view (instead of the url) and the variable
-                                                                          #- part (p.id).
-
-
+		return redirect(reverse(self.success_url, kwargs={'pk': self.question.pk}), permanent=False)
