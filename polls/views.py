@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.messages import get_messages
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 
 from django.views.generic import RedirectView, ListView, DetailView
 from django.views.generic.edit import FormView
@@ -18,13 +17,17 @@ from django.contrib.auth import logout
 #- This is the view file, where the contents of a web page is
 #- defined. This site, for instance, will have the following
 #- views:
-#-    * signup
-#-    * login
-#-    * logout
-#-    * index
-#-    * detail
-#-    * results
-#-    * vote
+#-
+#- index
+#-   |____signup
+#-   |____login
+#-   |______create
+#-   |________modify
+#-   |________delete
+#-   |______logout
+#-   |______vote
+#-            |____results
+#-
 #-
 #- For using the template facilities the import RequestContext
 #- and loader is nedeed. The first class is used to import
@@ -108,13 +111,6 @@ class IndexView(ListView):
 
   def get_queryset(self):
     return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
-
-class DetailView(DetailView):
-  model = Question
-  template_name = 'polls/detail.html'
-
-  def get_queryset(self):
-    return Question.objects.filter(pub_date__lte=timezone.now())
 
 class ResultsView(DetailView):
   model = Question
