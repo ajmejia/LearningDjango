@@ -120,14 +120,13 @@ class ResultsView(DetailView):
     return Question.objects.filter(pub_date__lte=timezone.now())
 
 class VoteView(FormView):
-
 	template_name = 'polls/vote.html'
 	form_class = ChoiceForm
 	success_url = 'polls:results'
 	error_url = 'polls:vote'
 
 	def get(self, request, pk, *args, **kwargs):
-		self.question = get_object_or_404(Question, pk=pk)
+		self.question = get_object_or_404(Question.objects.filter(pub_date__lte=timezone.now()), pk=pk)
 		self.choices = self.question.choice_set.all()
 		self.labels = [(i, c.choice_text) for i, c in enumerate(self.choices)]
 		return super(VoteView, self).get(request, pk)
