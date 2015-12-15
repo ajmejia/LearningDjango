@@ -36,7 +36,7 @@
              names on several applications. -->
         <div>
           {% for question in latest_question_list %}
-            <p><a class="polls-list" href="{% url 'polls:detail'  question.id %}">{{ question.question_text }}</a></p>
+            <p><a class="polls-list" href="{% url 'polls:vote' question.id %}">{{ question.question_text }}</a></p>
             <p class="pub-date">{{ question.pub_date }}</p>
           {% endfor %}
         </div>

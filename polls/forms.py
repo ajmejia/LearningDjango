@@ -48,3 +48,12 @@ class LogInForm(forms.Form):
 	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
 	password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
+class ChoiceForm(forms.Form):	
+	
+	def __init__(self, *args, **kwargs):
+		self.choices = kwargs.pop('choices')
+		self.choices = zip(range(1, len(self.choices)+1), self.choices)
+		super(ChoiceForm, self).__init__(*args, **kwargs)
+
+		self.choice_text = forms.ChoiceField(choices=self.choices, widget=forms.RadioSelect)
+		

@@ -8,7 +8,7 @@ from django.views.generic.edit import FormView
 from django.utils import timezone
 
 from .models import User, Choice, Question
-from .forms import SpanErrorList, SignUpForm, LogInForm
+from .forms import SpanErrorList, SignUpForm, LogInForm, ChoiceForm
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
@@ -83,7 +83,7 @@ class LoginView(FormView):
 				messages.add_message(self.request, messages.SUCCESS, 'Welcome back!')
 				return redirect(self.success_url)
 			else:
-				messages.add_message(request, messages.ERROR, 'Sorry, your account has been disabled from this site.')
+				messages.add_message(self.request, messages.ERROR, 'Sorry, your account has been disabled from this site.')
 				return redirect(self.error_url)
 		else:
 			messages.add_message(self.request, messages.ERROR, 'Invalid username/password, try again.')
@@ -123,22 +123,58 @@ class ResultsView(DetailView):
   def get_queryset(self):
     return Question.objects.filter(pub_date__lte=timezone.now())
 
+class VoteView(FormView):
 
-def vote(request, question_id):
-  p = get_object_or_404(Question, pk=question_id)
-  try:
-    selected_choice = p.choice_set.get(pk=request.POST['choice'])         #- The request.POST is a dictionary-like object that maps the submitted
-                                                                          #- data through the post method.
-  except KeyError, Choice.DoesNotExist:
-    return render(request, 'polls/detail.html', {
-                  'question': p,
-                  'error_message': "You didn't setect a choice.",         #- This there is no option selected upon submitting, a KeyError will be raised
-                                                                          #- and the detail template will be rendered with a error message.
-                  })
-  else:
-    selected_choice.votes += 1
-    selected_choice.save()
-    return redirect(reverse('polls:results', args=(p.id,)))               #- Since the page we want to redirect to has a variable url, I used the
+	def __init__(self, *args, **kwargs):
+		super(VoteView, self).__init__(*args, **kwargs)
+
+		self.template_name = 'polls/vote.html'
+		self.form_class = ChoiceForm
+		self.success_url = 'polls:results'
+		self.error_url = 'polls:vote'
+
+		self.question = get_object_or_404(Question, pk=2)                # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OJO!!
+		self.choices = self.question.choice_set.all()
+		self.labels = [c.choice_text for c in self.choices]
+		
+	def get(self, self.request):
+		return render(self.request, self.template_name, {'question': self.question})
+
+	def get_form_kwargs(self):
+		kwargs = super(VoteView, self).get_form_kwargs()
+		kwargs.update({'choices': self.labels})
+		print kwargs
+		if self.request.method == "GET":
+			return dict(data={}, choices=self.labels)
+		else:
+			return dict(data=self.request.POST, error_class=SpanErrorList, choices=self.labels)
+
+	def form_valid(self, form):
+		try:
+			selected_choice = self.question.choice_set.get(pk=self.request.POST['choice'])
+		except KeyError, selected_choice.DoesNotExist:
+			messages.add_message(self.request, messages.ERROR, 'You must select one option to vote.')
+			return redirect(reverse(self.error_url, kwargs={'form': form, 'pk': self.question.pk}))
+
+		selected_choice.votes += 1
+		selected_choice.save()
+		return redirect(reverse(self.success_url, kwargs={'form': form, 'pk': self.question.pk}))
+
+#def vote(request, question_id):
+#  p = get_object_or_404(Question, pk=question_id)
+#  try:
+#    selected_choice = p.choice_set.get(pk=request.POST['choice'])         #- The request.POST is a dictionary-like object that maps the submitted
+#                                                                          #- data through the post method.
+#  except KeyError, Choice.DoesNotExist:
+#    return render(request, 'polls/detail.html', {
+#                  'question': p,
+#                  'error_message': "You didn't setect a choice.",         #- This there is no option selected upon submitting, a KeyError will be raised
+#                                                                          #- and the detail template will be rendered with a error message.
+#                  })
+#  else:
+#    selected_choice.votes += 1
+#    selected_choice.save()
+#    return redirect(reverse('polls:results', args=(p.id,)))               #- Since the page we want to redirect to has a variable url, I used the
                                                                           #- reverse method to give the view (instead of the url) and the variable
                                                                           #- part (p.id).
 
