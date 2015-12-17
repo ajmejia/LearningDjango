@@ -1,4 +1,11 @@
 from django.test import TestCase
+import datetime
+from django.utils import timezone
+from django.core.urlresolvers import reverse
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
+
+from .models import Question, User
 
 # Create your tests here.
 #---------------------------------------------------------------
@@ -9,21 +16,223 @@ from django.test import TestCase
 #- databases automatically created/destroyed during the tests
 #- run.
 #---------------------------------------------------------------
-import datetime
 
-from django.utils import timezone
-from django.test import TestCase
-from django.core.urlresolvers import reverse
-
-from .models import Question
+USERNAME = 'name'
+EMAIL = 'name@somewhere.com'
+PASSWORD = '1234567'
 
 def create_question(question_text, days):
   """
-  Creates a question with the given question_text and the
+  Creates a question with the given question_text and
   and a publication date with an offset of days from now.
   """
   time = timezone.now() + datetime.timedelta(days=days)
   return Question.objects.create(question_text=question_text, pub_date=time)
+
+class SignupViewTests(TestCase):
+	
+	def test_create_and_login_user(self):
+		"""Can create & login user?"""
+		response = self.client.post(reverse('polls:signup'), {'username': USERNAME, 'email': EMAIL,
+		                                                      'password1': PASSWORD, 'password2': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		url, status = response.redirect_chain[0]
+		self.assertEqual(url, 'http://testserver/polls/')
+		self.assertEqual(status, 302)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, USERNAME)
+		self.assertEqual(int(self.client.session['_auth_user_id']), User.objects.get(username=USERNAME).id)
+		self.assertContains(response, 'Welcome aboard!')
+
+	def test_signup_with_missing_username(self):
+		"""Display the message: 'This field is required.'"""
+		response = self.client.post(reverse('polls:signup'), {'email': EMAIL, 'password1': PASSWORD,
+		                                                      'password2': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This field is required.')
+
+	def test_signup_with_missing_email(self):
+		"""Display the message: 'This field is required.'"""
+		response = self.client.post(reverse('polls:signup'), {'username': USERNAME, 'password1': PASSWORD,
+		                                                      'password2': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This field is required.')
+
+	def test_signup_with_missing_password1(self):
+		"""Display the message: 'This field is required.'"""
+		response = self.client.post(reverse('polls:signup'), {'username': USERNAME, 'email': EMAIL,
+		                                                      'password2': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This field is required.')
+
+	def test_signup_with_missing_password2(self):
+		"""Display the message: 'This field is required.'"""
+		response = self.client.post(reverse('polls:signup'), {'username': USERNAME, 'email': EMAIL,
+		                                                      'password1': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This field is required.')
+
+	def test_signup_with_mismatching_passwords(self):
+		"""Display the message: 'Passwords does not match.'"""
+		response = self.client.post(reverse('polls:signup'), {'username': USERNAME, 'email': EMAIL,
+		                                                      'password1': PASSWORD, 'password2': PASSWORD+"8",
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Passwords does not match.')
+
+	def test_signup_while_logged_in(self):
+		"""Display the message: 'You are already logged in as'"""
+		response = self.client.post(reverse('polls:signup'), {'username': USERNAME, 'email': EMAIL,
+		                                                      'password1': PASSWORD, 'password2': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(int(self.client.session['_auth_user_id']), User.objects.get(username=USERNAME).id)
+		response = self.client.get(reverse('polls:signup'), {'username': USERNAME, 'email': EMAIL,
+		                                                      'password1': PASSWORD, 'password2': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'You are already logged in as %s'%USERNAME)
+
+	def test_signup_with_existing_username(self):
+		"""Display the message: 'This username is already taken.'"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+		response = self.client.post(reverse('polls:signup'), {'username': USERNAME, 'email': "1"+EMAIL,
+		                                                      'password1': PASSWORD, 'password2': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This username is already taken.')
+
+	def test_signup_with_existing_email(self):
+		"""Display the message: 'This email is already in use.'"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+		response = self.client.post(reverse('polls:signup'), {'username': "1"+USERNAME, 'email': EMAIL,
+		                                                      'password1': PASSWORD, 'password2': PASSWORD,
+		                                                     }, follow=True
+		                           )
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This email is already in use.')
+
+class LoginViewTests(TestCase):
+
+	def test_login_non_existing_user(self):
+		"""Can't login NON EXISTING user"""
+		response = self.client.post(reverse('polls:login'), {'username': USERNAME, 'password': PASSWORD},
+		                            follow=True)
+		url, status = response.redirect_chain[0]
+		self.assertEqual(url, 'http://testserver/polls/login')
+		self.assertEqual(status, 302)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Invalid username/password, try again.')
+		
+	def test_login_existing_user(self):
+		"""Can login EXISTING user"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+		response = self.client.post(reverse('polls:login'), {'username': USERNAME, 'password': PASSWORD},
+		                            follow=True)
+		url, status = response.redirect_chain[0]
+		self.assertEqual(url, 'http://testserver/polls/')
+		self.assertEqual(status, 302)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Welcome back!')
+
+	def test_login_with_missing_username_on_non_existing_user(self):
+		"""Display the message: 'This field is required.'"""
+		response = self.client.post(reverse('polls:login'), {'password': PASSWORD},
+		                            follow=True)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This field is required.')
+
+	def test_login_with_missing_password_on_non_existing_user(self):
+		"""Display the message: 'This field is required.'"""
+		response = self.client.post(reverse('polls:login'), {'username': USERNAME},
+		                            follow=True)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This field is required.')
+
+	def test_login_with_missing_username_on_existing_user(self):
+		"""Display the message: 'This field is required.'"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+		response = self.client.post(reverse('polls:login'), {'password': PASSWORD},
+		                            follow=True)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This field is required.')
+
+	def test_login_with_missing_password_on_existing_user(self):
+		"""Display the message: 'This field is required.'"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+		response = self.client.post(reverse('polls:login'), {'username': USERNAME},
+		                            follow=True)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'This field is required.')
+
+	def test_login_with_incorrect_username(self):
+		"""Display the message: 'Invalid username/password, try again.'"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+		response = self.client.post(reverse('polls:login'), {'username': USERNAME+'a', 'password': PASSWORD},
+		                            follow=True)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Invalid username/password, try again.')
+		
+	def test_login_with_incorrect_password(self):
+		"""Display the message: 'Invalid username/password, try again.'"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+		response = self.client.post(reverse('polls:login'), {'username': USERNAME, 'password': PASSWORD+'abc'},
+		                            follow=True)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Invalid username/password, try again.')
+
+	def test_login_with_deactivated_user(self):
+		"""Display the message: 'Sorry, your account has been disabled from this site.'"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+		user.is_active = False
+		user.save()
+		response = self.client.post(reverse('polls:login'), {'username': USERNAME, 'password': PASSWORD},
+		                            follow=True)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Sorry, your account has been disabled from this site.')
+
+	def test_login_with_another_account_logged_in(self):
+		"""Display the message: 'You are already logged in as'"""
+		user1 = User.objects.create_user(username="1"+USERNAME, email="1"+EMAIL, password=PASSWORD)
+		user2 = User.objects.create_user(username="2"+USERNAME, email="2"+EMAIL, password=PASSWORD)
+		
+		response = self.client.post(reverse('polls:login'), {'username': user1.username, 'password': PASSWORD},
+		                            follow=True)
+		self.assertEqual(int(self.client.session['_auth_user_id']), user1.id)
+
+		response = self.client.get(reverse('polls:login'), follow=True)
+		url, status = response.redirect_chain[0]
+		self.assertEqual(url, 'http://testserver/polls/')
+		self.assertEqual(status, 302)  
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'You are already logged in as %s'%user1.username)
+
+	def test_login_with_same_account_logged_in(self):
+		"""Display the message: 'You are already logged in as'"""
+		user = User.objects.create_user(username=USERNAME, email=EMAIL, password=PASSWORD)
+
+		response = self.client.post(reverse('polls:login'), {'username': user.username, 'password': PASSWORD},
+		                            follow=True)
+		self.assertEqual(int(self.client.session['_auth_user_id']), user.id)
+
+		response = self.client.get(reverse('polls:login'), follow=True)
+		url, status = response.redirect_chain[0]
+		self.assertEqual(url, 'http://testserver/polls/')
+		self.assertEqual(status, 302)  
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'You are already logged in as %s'%user.username)
 
 class QuestionViewTests(TestCase):
 
@@ -69,18 +278,18 @@ class QuestionViewTests(TestCase):
                             )
 
 
-class QuestionDetailTests(TestCase):
+class QuestionVoteTests(TestCase):
   
-  def test_detail_view_with_a_future_question(self):
+  def test_vote_view_with_a_future_question(self):
     """Should return a 404 page."""
     future_question = create_question(question_text='Future question.', days=5)
-    response = self.client.get(reverse('polls:detail', args=(future_question.id,)))
+    response = self.client.get(reverse('polls:vote', args=(future_question.id,)))
     self.assertEqual(response.status_code, 404)
 
-  def test_detail_view_with_a_past_question(self):
-    """Past questions should should have a detail view."""
+  def test_vote_view_with_a_past_question(self):
+    """Past questions should should have a vote view."""
     past_question = create_question(question_text='Past question.', days=-5)
-    response = self.client.get(reverse('polls:detail', args=(past_question.id,)))
+    response = self.client.get(reverse('polls:vote', args=(past_question.id,)))
     self.assertContains(response, past_question.question_text, status_code=200)
 
 
@@ -121,6 +330,3 @@ class QuestionModelTests(TestCase):
     time = timezone.now() - datetime.timedelta(hours=1)
     recent_question = Question(pub_date=time)
     self.assertEqual(recent_question.was_published_recently(), True)
-
-
-
