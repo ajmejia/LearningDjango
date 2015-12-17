@@ -43,6 +43,13 @@ class SignupView(FormView):
 	template_name = 'polls/signup.html'
 	form_class = SignUpForm
 	success_url = 'polls:index'
+	error_url = 'polls:index'
+
+	def get(self, request, *args, **kwargs):
+		if isinstance(request.user, User):
+			messages.add_message(request, messages.ERROR, 'You are already logged in as %s'%request.user.username)
+			return redirect(self.error_url, permanent=False)
+		return super(LoginView, self).get(request, *args, **kwargs)
 
 	def get_form_kwargs(self):
 		if self.request.method == "POST":
@@ -71,6 +78,12 @@ class LoginView(FormView):
 	success_url = 'polls:index'
 	error_url = 'polls:index'
 
+	def get(self, request, *args, **kwargs):
+		if isinstance(request.user, User):
+			messages.add_message(request, messages.ERROR, 'You are already logged in as %s'%request.user.username)
+			return redirect(self.error_url, permanent=False)
+		return super(LoginView, self).get(request, *args, **kwargs)
+
 	def get_form_kwargs(self):
 		if self.request.method == "POST":
 			return dict(data=self.request.POST, error_class=SpanErrorList)
@@ -78,7 +91,8 @@ class LoginView(FormView):
 			return dict()
 	
 	def form_valid(self, form):
-		user = authenticate(username=self.request.POST['username'], password=self.request.POST['password'])
+		user = authenticate(username=form.cleaned_data['username'],
+		                    password=form.cleaned_data['password'])
 		if user != None:
 			if user.is_active:
 				login(self.request, user)
@@ -93,6 +107,7 @@ class LoginView(FormView):
 			return redirect('polls:login', permanent=False)
 
 class LogoutView(RedirectView):
+	permanent = False
 	pattern_name = 'index'
 	query_string = False
 

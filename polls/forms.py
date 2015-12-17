@@ -31,9 +31,16 @@ class SignUpForm(forms.Form):
 			return data
 
 	def clean_password2(self):
-		data1 = self.cleaned_data['password1']
-		data2 = self.cleaned_data['password2']
-		if data1 and data2 and data1 != data2: raise forms.ValidationError('Passwords do not match.')
+		try:
+			data1 = self.cleaned_data['password1']
+		except KeyError:
+			raise forms.ValidationError('This field is required.')
+		try:
+			data2 = self.cleaned_data['password2']
+		except KeyError:
+			raise forms.ValidationError('This field is required.')
+
+		if data1 and data2 and data1 != data2: raise forms.ValidationError('Passwords does not match.')
 		return data2
 
 	def clean_email(self):
