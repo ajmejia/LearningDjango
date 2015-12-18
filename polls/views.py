@@ -80,12 +80,12 @@ class IndexView(ListView):
 	"""
 	model = Question
 	template_name = "polls/index.html"
+	context_object_name = "poll_list"
 	
-#	def get_context_data(self):
-#		context_data = super(IndexView, self).get_context_data()
-#		context_data.update(dict(polluser=self.request.session))
-#		print self.request.session.keys()
-#		return context_data
+	def get_context_data(self, **kwargs):
+		context = super(IndexView, self).get_context_data(**kwargs)
+		context.update(polluser=self.request.user)
+		return context
 
 class VoteView(UpdateView):
 	pass
