@@ -9,11 +9,11 @@
   </head>
 
   <body>
-    <h1>Recent Polls</h1>
+    <h1>Polls</h1>
     <div>
     	<ul class="nav-bar nav-bar-btn">
-    	{% if user.is_authenticated %}
-	    	<li>{{ user.username }}</li>
+    	{% if polluser.is_authenticated %}
+	    	<li>{{ polluser.username }}</li>
 		   	<li><a href="{% url 'polls:logout' %}">Sign out</a></li>
 		  {% else %}
 		  	<li><a href="{% url 'polls:signup' %}">Sign up</a></li>
@@ -30,14 +30,14 @@
     </div>
     </br>
     <div>
-      {% if latest_question_list %}
+      {% if object_list %}
         <!-- This url tag works wonderfully with my url definitions!
              Plus with the pulls key 'polls' there can be several 'detail'
              names on several applications. -->
         <div>
-          {% for question in latest_question_list %}
-            <p><a class="polls-list" href="{% url 'polls:vote' question.id %}">{{ question.question_text }}</a></p>
-            <p class="pub-date">{{ question.pub_date }}</p>
+          {% for poll in object_list %}
+            <p><a class="polls-list" href="{% url 'polls:vote' poll.id %}">{{ poll.question_text }}</a></p>
+            <p class="pub-date">{{ poll.pub_date }}</p>
           {% endfor %}
         </div>
       {% else %}

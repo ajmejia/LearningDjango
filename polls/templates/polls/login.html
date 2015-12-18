@@ -9,13 +9,14 @@
 </div>
 <form action="{% url 'polls:login' %}" method="post">
 	{% csrf_token %}
-	<div class="fieldWrapper">
-		<label for="{{ form.username.id_for_label }}">Username: </label>
+	<div class="field-wrapper">
+		<label for="{{ form.username.id_for_label }}">{{ form.username.label }} </label>
 		<p>{{ form.username }} <span class="form-field-error">{{ form.username.errors }}</span></p>
 	</div>
-	<div class="fieldWrapper">
-		<label for="{{ form.password.id_for_label }}">Password: </label>
+	<div class="field-wrapper">
+		<label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
 		<p>{{ form.password }} <span class="form-field-error">{{ form.password.errors }}</span></p>
+	</div>
 	<input type="submit" value="Sign in"/>
 </form>
 

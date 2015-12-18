@@ -1,7 +1,7 @@
 <h1>Sign Up</h1>
 
 <div class="flash-message-container">
-	{% with flash_messages=form.non_field_errors|add:messages %}
+	{% with flash_messages=messages|add:form.non_field_errors %}
 		{% for message in flash_messages %}
 			<p class="{{ message.tags }}">{{ message }}</p>
 		{% endfor %}
@@ -9,21 +9,21 @@
 </div>
 <form action="{% url 'polls:signup' %}" method="post">
 	{% csrf_token %}
-	<div class="fieldWrapper">
-		<label for="{{ form.username.id_for_label }}">Username: </label>
+	<div class="field-wrapper">
+		<label for="{{ form.username.id_for_label }}">{{ form.username.label }} </label>
 		<p>{{ form.username }} <span class="form-field-error">{{ form.username.errors }}</span></p>
 	</div>
-	<div class="fieldWrapper">
-		<label for="{{ form.email.id_for_label }}">Email: </label>
+	<div class="field-wrapper">
+		<label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
 		<p>{{ form.email }} <span class="form-field-error">{{ form.email.errors }}</span></p>
 	</div>
-	<div class="fieldWrapper">
-		<label for="{{ form.password1.id_for_label }}">Password: </label>
-		<p>{{ form.password1 }} <span class="form-field-error">{{ form.password1.errors }}</span></p>
+	<div class="field-wrapper">
+		<label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+		<p>{{ form.password }} <span class="form-field-error">{{ form.password.errors }}</span></p>
 	</div>
-		<div class="fieldWrapper">
-		<label for="{{ form.password2.id_for_label }}">Password confirmation: </label>
-		<p>{{ form.password2 }} <span class="form-field-error">{{ form.password2.errors }}</span></p>
+	<div class="field-wrapper">
+		<label for="{{ form.confirm_password.id_for_label }}">{{ form.confirm_password.label }}</label>
+		<p>{{ form.confirm_password }} <span class="form-field-error">{{ form.confirm_password.errors }}</span></p>
 	</div>
 	<input type="submit" value="Sign up"/>
 </form>
