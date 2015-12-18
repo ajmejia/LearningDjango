@@ -16,6 +16,24 @@ class SignupView(CreateView):
 	model = PollUser
 	form_class = SignupForm
 
+	def form_valid(self, form):
+		self.object = form.save()
+		username = form.cleaned_data["username"]
+		password = form.cleaned_data["password"]
+
+		polluser = authenticate(username=username, password=password)
+		if polluser != None:
+			if polluser.is_active:
+				login(self.request, polluser)
+				messages.add_message(self.request, messages.SUCCESS, "Welcome aboard, %s!"%username)
+			else:
+				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account started disabled.")
+		else:
+			messages.add_message(self.request, messages.ERROR, "Oh no! Something went wrong. Contact your favorite developer to fix this.")
+			return redirect("polls:signup", permanent=False)
+
+		return redirect("polls:index")
+
 class LoginView(FormView):
 	template_name = "polls/login.html"
 	form_class = LoginForm
@@ -29,13 +47,13 @@ class LoginView(FormView):
 			if polluser.is_active:
 				login(self.request, polluser)
 				messages.add_message(self.request, messages.SUCCESS, "Welcome back, %s!"%username)
-				return redirect("polls:index")
 			else:
-				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account has been desabled.")
-				return redirect("polls:index")
+				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account has been disabled.")
 		else:
 			messages.add_message(self.request, messages.ERROR, "Invalid username/password, try again.")
 			return redirect("polls:login", permanent=False)
+
+		return redirect("polls:index")
 
 class LogoutView(RedirectView):
 	"""
