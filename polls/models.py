@@ -1,8 +1,11 @@
 import datetime
 
 from django.db import models
+from django import forms
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.utils.encoding import force_unicode
 
 # Create your models here.
 #---------------------------------------------------------------
@@ -18,29 +21,84 @@ from django.contrib.auth.models import User
 #-    * Create the database holding the app data.
 #-    * Create the python handles to access that database.
 #---------------------------------------------------------------
+USERNAME_MAX_LENGTH = 10
+PASSWORD_MIN_LENGTH = 7
+PASSWORD_MAX_LENGTH = 20
+EMAIL_MAX_LENGTH = 100
+
+QUESTION_MAX_LENGTH = 200
+CHOICE_MAX_LENGTH = 200
+
+class PollUser(User):
+#	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
+#	email = forms.EmailField(max_length=EMAIL_MAX_LENGTH)
+#	password = forms.CharField(min_length=PASSWORD_MIN_LENGTH)
+
+	def __unicode__(self):
+		return force_unicode(self.username)
+
+	def get_absolute_url(self):
+		return reverse("polls:index")
+
 class Question(models.Model):
-  question_text = models.CharField(max_length=200)   #- max_length is mandatory.
-  pub_date = models.DateTimeField("date published")  #- First positional arg handles the human-readable name
-                                                     #- of the field. This defaults to the name of the
-                                                     #- variable in machine-readable format.
-  def __unicode__(self):
-    return self.question_text                        #- A human-readable representation of the Question object.
+	question = models.CharField(max_length=QUESTION_MAX_LENGTH)
+	created_on = models.DateTimeField("date published")
+	created_by = models.ForeignKey(PollUser)
 
-  def was_published_recently(self):                  #- Another method for handling publication date (?).
-    now = timezone.now()
-    return now - datetime.timedelta(days=1) <= self.pub_date <= now
-
-                                                                   #- This is probably telling how to treat this method
-                                                                   #- as a field. Like a custom field.
-  was_published_recently.admin_order_field = 'pub_date'            #- Custom order field when request ordering by this one.
-  was_published_recently.boolean = True                            #- Tells the renderer this is a boolean field.
-  was_published_recently.short_description = 'Published recently?' #- Short human-readable name.
+	def __unicode__(self):
+		return force_unicode(self.question_text)
 
 class Choice(models.Model):
-  question = models.ForeignKey(Question)             #- The ForeignKey tells django that each Choice is related
-                                                     #- to a single Question (many-to-one).
-  choice_text = models.CharField(max_length=200)     #- Another CharField
-  votes = models.IntegerField(default=0)             #- An IntegerField with default value of 0.
+	for_question = models.ForeignKey(Question, verbose_name="choice for question")
+	choice = models.CharField(max_length=CHOICE_MAX_LENGTH)
+	votes = models.IntegerField(default=0)
 
-  def __unicode__(self):
-    return self.choice_text
+	def __unicode__(self):
+		return force_unicode(self.choice_text)
+
+class SignupForm(forms.ModelForm):
+	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=True, widget=forms.PasswordInput)
+
+	class Meta:
+		model = PollUser
+		fields = ("username", "email", "password", "confirm_password",)
+		widgets = {"password": forms.PasswordInput}
+
+	def clean_confirm_password(self):
+		data = self.cleaned_data.get("confirm_password")
+		password = self.cleaned_data.get("password")
+		if data and password and data != password:
+				raise forms.ValidationError("Passwords do not match.")
+		return data
+		
+	def save(self, commit=True):
+		user = super(SignupForm, self).save(commit=False)
+		user.set_password(self.cleaned_data["password"])
+		if commit:
+			user.save()
+		return user
+
+class LoginForm(forms.Form):
+	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
+	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, widget=forms.PasswordInput)
+	
+	def clean_username(self):
+		data = self.cleaned_data.get("username")
+		if data:
+			try:
+				user = PollUser.objects.get(username=data)
+			except PollUser.DoesNotExist:
+				raise forms.ValidationError("%s does not exist."%data)
+			return data			
+
+class QuestionForm(forms.ModelForm):
+
+	class Meta:
+		model = Question
+		fields = ("question",)
+
+class ChoiceForm(forms.ModelForm):
+
+	class Meta:
+		model = Choice
+		fields = ("choice",)
