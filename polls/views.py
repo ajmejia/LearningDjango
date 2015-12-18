@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 
 from django.views.generic import RedirectView, ListView, DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
@@ -45,10 +45,15 @@ class LogoutView(RedirectView):
 		3.get_redirect_url()
 	"""
 	permanent = False
-	pattern_name = "index"
+	pattern_name = "polls:index"
 	
-	def dispatch(request, *args, **kwargs):
+	def dispatch(self, request, *args, **kwargs):
+		username = request.user.username
 		logout(request)
+		if not isinstance(request.user, PollUser):
+			messages.add_message(request, messages.SUCCESS, "See you soon, %s!"%username)
+		else:
+			messages.add_message(request, messages.SUCCESS, "Sorry, we could not log you out.")
 		return super(LogoutView, self).dispatch(request, *args, **kwargs)
 
 class UserUpdate(UpdateView):
