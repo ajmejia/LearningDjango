@@ -1,0 +1,79 @@
+@import "color_style";
+
+body {
+	font-family: 'Lato', sans-serif;
+	color: $dark;
+}
+#navigation {
+	padding: 2em 5%;
+	#logo {
+		font-weight: 700;
+		font-size: 1em;
+		text-transform: uppercase;
+		text-decoration: none;
+		letter-spacing: 0.2em;
+		float: left;
+		color: $dark;
+		}
+	nav {
+		float: right;
+		a {
+			margin: 0 0.7em;
+			font-size: 1em;
+			text-decoration: none;
+			color: $dark;
+			}
+		#username {
+			margin: 0 2em;
+			font-weight: 700;
+			text-transform: capitalize;
+			color: $highlight;
+		}
+	}
+}
+#flash-message-container {
+	height: 2em;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+div.success {
+	height: 100%;
+	width: 100%;
+	line-height: 2em;
+	margin: 0;
+	padding: 0;
+	font-size: 1em;
+	text-align: center;
+	color: $success;
+	background-color: $bg_success;
+}
+div.warning {
+	height: 100%;
+	width: 100%;
+	line-height: 2em;
+	margin: 0;
+	padding: 0;
+	font-size: 1em;
+	text-align: center;
+	color: $warning;
+	background-color: $bg_warning;
+}
+div.error {
+	height: 100%;
+	width: 100%;
+	line-height: 2em;
+	margin: 0;
+	padding: 0;
+	font-size: 1em;
+	text-align: center;
+	color: $error;
+	background-color: $bg_error;
+}
+#page-container {
+	min-height: 500px;
+	text-align: center;
+	#page-title {
+		text-transform: uppercase;
+	}
+}

@@ -1,0 +1,14 @@
+#page-body {
+  height: 100%;
+  line-height: 500px;
+  width: 70%;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0px 10px 5px #a9a2a2; }
+
+#empty {
+  font-size: 2em;
+  font-weight: 700;
+  color: #a9a2a2; }
+
+/*# sourceMappingURL=index_style.css.map */

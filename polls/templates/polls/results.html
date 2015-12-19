@@ -1,9 +1,17 @@
-<h1>{{ question.question_text }}</h1>
+{% extends "base_template.html" %}
 
- <div class="results-wrapper">
-  {% for choice in question.choice_set.all %}
-    <div class="votes-wrapper">{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</div>
-  {% endfor %}
- </div>
- </br>
- <a href="{% url 'polls:index' %}">Try another poll</a>
+{% block page_title %}Poll Results{% endblock %}
+{% block flash_messages %}
+	<p class="{{ messages.0.tags }}">{{ messages.0 }}</p>
+{% endblock %}
+{% block page_content %}
+	<h2>{{ question.question_text }}</h2>
+
+	<div class="results-wrapper">
+		{% for choice in question.choice_set.all %}
+			<div class="votes-wrapper">{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</div>
+		{% endfor %}
+	</div>
+	</br>
+	<a href="{% url 'polls:index' %}">Try another poll</a>
+{% endblock %}

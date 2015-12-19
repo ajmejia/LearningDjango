@@ -1,49 +1,29 @@
-<!DOCTYPE HTML>
-<html lang="eng">
-  <head>
-    <title>Polls</title>
-    <!-- This will load the static tag used below to target the css file -->
-    {% load staticfiles %}
-    <link rel="stylesheet" type="text/css" href="{% static 'polls/normalize.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
-  </head>
+{% extends "base_template.html" %}
 
-  <body>
-    <h1>Polls</h1>
-    <div>
-    	<ul class="nav-bar nav-bar-btn">
-    	{% if polluser.is_authenticated %}
-	    	<li>{{ polluser.username }}</li>
-		   	<li><a href="{% url 'polls:logout' %}">Sign out</a></li>
-		  {% else %}
-		  	<li><a href="{% url 'polls:signup' %}">Sign up</a></li>
-		   	<li><a href="{% url 'polls:login' %}">Sign in</a></li>
-		  {% endif %}
-    	</ul>
-    </div>
-    <div class="flash-message-container">
-      {% if messages %}
-				{% for message in messages %}
-					<p class="{{ message.tags }}">{{ message }}</p>
-				{% endfor %}
-			{% endif %}
-    </div>
-    </br>
-    <div>
-      {% if object_list %}
-        <!-- This url tag works wonderfully with my url definitions!
-             Plus with the pulls key 'polls' there can be several 'detail'
-             names on several applications. -->
-        <div>
-          {% for poll in object_list %}
-            <p><a class="polls-list" href="{% url 'polls:vote' poll.id %}">{{ poll.question_text }}</a></p>
-            <p class="pub-date">{{ poll.pub_date }}</p>
-          {% endfor %}
-        </div>
-      {% else %}
-        <p>No polls are available.</p>
-      {% endif %}
-    </div>
-  </body>
-</html>
+{% block add_styles %}
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/index_style.css' %}">
+{% endblock %}
 
+{% block flash_messages_block %}
+	{% with flash_messages=messages %}
+		{% for message in flash_messages %}
+			<div class="{{ message.tags }}">{{ message }}</div>
+		{% endfor %}
+	{% endwith %}
+{% endblock %}
+
+{% block page_title %}Active Polls{% endblock %}
+
+{% block page_content %}
+	{% if object_list %}
+		{% for poll in object_list %}
+			<div class="poll-container">
+				<a href="{% url 'polls:vote' poll.pk %}" class="question-list">{{ poll.question }}</a>
+				<p class="date-list">{{ poll.pub_date }}</p>
+			</div>
+		{% endfor %}
+	{% else %}
+		<div id="empty">No polls here... :(</div>
+	{% endif %}
+{% endblock %}

@@ -1,14 +1,24 @@
-<h1>{{ form.question_text }}</h1>
+{% extends "base_template.html" %}
 
-<div class="flash-message-container">
-	{% with flash_messages=form.choice_text.error_messages|add:messages %}
-		{% for message in flash_messages %}
-			<p class="{{ message.tags }}">{{ message }}</p>
-		{% endfor %}
-	{% endwith %}
-</div>
-<form action="{% url 'polls:vote' form.question_pk %}" method="post">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<input type="submit" value="Vote"/>
-</form>
+{% block page_title %}Vote{% endblock %}
+{% block flash_messages %}
+		{% with flash_messages=form.non_field_errors|add:messages %}
+			<p class="{{ flash_messages.0.tags }}">{{ flash_messages.0 }}</p>
+		{% endif %}
+{% endblock %}
+{% block page_content %}
+	<h2>{{ form.question_text }}</h2>
+
+	<div class="flash-message-container">
+		{% with flash_messages=form.choice_text.error_messages|add:messages %}
+			{% for message in flash_messages %}
+				<p class="{{ message.tags }}">{{ message }}</p>
+			{% endfor %}
+		{% endwith %}
+	</div>
+	<form action="{% url 'polls:vote' form.question_pk %}" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Vote"/>
+	</form>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html lang="eng">
+  <head>
+    <!-- This will load the static tag used below to target the css file -->
+    {% load staticfiles %}
+    <title>Polls Site</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/normalize.css' %}">
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/base_style.css' %}">
+    {% block add_styles %}
+    {% endblock %}
+  </head>
+  <body>
+		<header id="navigation">
+			<a href="{% url 'polls:index' %}" id="logo">polls</a>
+			{% with polluser=request.user %}
+				<nav>
+					{% if polluser.is_authenticated %}
+						<a href="#" id="username">{{ polluser.username }}</a>
+						<a href="#{# url 'polls:create' polluser.pk #}">Create</a>
+						<a href="#{# url 'polls:mines' polluser.pk #}">Mines</a>
+						<a href="{% url 'polls:logout' %}">Sign out</a>
+					{% else %}
+						<a href="{% url 'polls:signup' %}">Sign up</a>
+						<a href="{% url 'polls:login' %}">Sign in</a>
+					{% endif %}
+				</nav>
+			{% endwith %}
+		</header>
+		<div id="flash-message-container">
+			{% block flash_messages_block %}
+			{% endblock %}
+		</div>
+		<div id="page-container">
+			<h1 id="page-title">{% block page_title %}{% endblock %}</h1>
+			<div id="page-body">
+				{% block page_content %}
+				{% endblock %}
+			</div>
+		</div>
+	</body>
+</html>

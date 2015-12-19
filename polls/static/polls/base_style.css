@@ -1,0 +1,73 @@
+body {
+  font-family: 'Lato', sans-serif;
+  color: #44403f; }
+
+#navigation {
+  padding: 2em 5%; }
+  #navigation #logo {
+    font-weight: 700;
+    font-size: 1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.2em;
+    float: left;
+    color: #44403f; }
+  #navigation nav {
+    float: right; }
+    #navigation nav a {
+      margin: 0 0.7em;
+      font-size: 1em;
+      text-decoration: none;
+      color: #44403f; }
+    #navigation nav #username {
+      margin: 0 2em;
+      font-weight: 700;
+      text-transform: capitalize;
+      color: #e69f5e; }
+
+#flash-message-container {
+  height: 2em;
+  width: 100%;
+  margin: 0;
+  padding: 0; }
+
+div.success {
+  height: 100%;
+  width: 100%;
+  line-height: 2em;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  text-align: center;
+  color: #00cc00;
+  background-color: #ccffcc; }
+
+div.warning {
+  height: 100%;
+  width: 100%;
+  line-height: 2em;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  text-align: center;
+  color: #cccc00;
+  background-color: #ffffcc; }
+
+div.error {
+  height: 100%;
+  width: 100%;
+  line-height: 2em;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  text-align: center;
+  color: #cc0000;
+  background-color: #ffcccc; }
+
+#page-container {
+  min-height: 500px;
+  text-align: center; }
+  #page-container #page-title {
+    text-transform: uppercase; }
+
+/*# sourceMappingURL=base_style.css.map */
