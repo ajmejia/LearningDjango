@@ -5,19 +5,17 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/form_style.css' %}">
 {% endblock %}
 
-{% block page_title %}Sign In{% endblock %}
-
 {% block flash_messages %}
 	{% with flash_messages=form.non_field_errors|add:messages %}
 		{% for message in flash_messages %}
-			<div id="flash-message-container {{ message.tag }}">
-					<p class="{{ message.tags }}">{{ message }}</p>
-			</div>
+			<div class="{{ message.tags }}">{{ message }}</div>
 		{% endfor %}
 	{% endwith %}
 {% endblock %}
 
-{% block page_content %}
+{% block page_title %}Start your polling now!{% endblock %}
+
+{% block page_body %}
 	<form action="{% url 'polls:login' %}" method="post">
 		{% csrf_token %}
 		<div class="field-wrapper">
