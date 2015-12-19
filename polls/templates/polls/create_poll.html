@@ -1,0 +1,40 @@
+{% extends "base_template.html" %}
+
+{% block add_styles %}
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/form_style.css' %}">
+{% endblock %}
+
+{% block flash_messages_block %}
+	{% with flash_messages=messages %}
+		{% for message in flash_messages %}
+			<div class="{{ message.tags }}">{{ message }}</div>
+		{% endfor %}
+	{% endwith %}
+{% endblock %}
+
+{% block page_title %}Create your poll{% endblock %}
+
+{% block page_body %}
+	{% with flash_messages=form.non_field_errors %}
+		{% for message in flash_messages %}
+			<div class="error">{{ message }}</div>
+		{% endfor %}
+	{% endwith %}
+	<form action="{% url 'polls:create-poll' %}" method="post">
+		{% csrf_token %}
+		<div class="field-wrapper">
+			<label for="{{ form.question.id_for_label }}">{{ form.question.label }} </label>
+			<p>{{ form.question }} <span class="form-field-error">{{ form.question.errors }}</span></p>
+		</div>
+		<div class="field-wrapper">
+			<label for="{{ form.choice1.id_for_label }}">{{ form.choice1.label }}</label>
+			<p>{{ form.choice1 }} <span class="form-field-error">{{ form.choice1.errors }}</span></p>
+		</div>
+		<div class="field-wrapper">
+			<label for="{{ form.choice2.id_for_label }}">{{ form.choice2.label }}</label>
+			<p>{{ form.choice2 }} <span class="form-field-error">{{ form.choice2.errors }}</span></p>
+		</div>
+		<input type="submit" value="Create"/>
+	</form>
+{% endblock %}

@@ -113,11 +113,21 @@ class UserAccountForm(forms.ModelForm):
 			user.save()
 		return user
 
-class QuestionForm(forms.ModelForm):
+class PollForm(forms.ModelForm):
+	choice1 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="Choice 1")
+	choice2 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="Choice 2")
 
 	class Meta:
 		model = Question
-		fields = ("question",)
+		fields = ("question", "choice1", "choice2")
+
+	def save(self, request, commit=True):
+		question = Question(question=self.cleaned_data["question"], created_on=timezone.now(), created_by=request.user)
+		question.choice_set.add(Choice(for_question_id=question.pk, choice=self.cleaned_data["choice1"]))
+		question.choice_set.add(Choice(for_question_id=question.pk, choice=self.cleaned_data["choice2"]))
+		if commit:
+			question.save()
+		return question
 
 class ChoiceForm(forms.ModelForm):
 

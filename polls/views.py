@@ -7,7 +7,7 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 from django.utils import timezone
 from django import forms
 
-from .models import PollUser, Choice, Question, SignupForm, LoginForm, UserAccountForm, QuestionForm, ChoiceForm
+from .models import PollUser, Choice, Question, SignupForm, LoginForm, UserAccountForm, PollForm
 
 from django.contrib.auth import authenticate, login, logout
 
@@ -98,12 +98,19 @@ class UserAccountView(UpdateView):
 		return redirect("polls:index")
 
 class CreatePollView(CreateView):
+	template_name = "polls/create_poll.html"
 	model = Question
-	form_class = QuestionForm
+	form_class = PollForm
+	
+	def form_valid(self, form):
+		self.object = form.save(self.request)
+		
+		messages.add_message(self.request, messages.SUCCESS, "Yei! You opened a new poll!")
+		return redirect("polls:index")
 
 class UpdatePollView(UpdateView):
 	model = Question
-	form_class = QuestionForm
+	form_class = PollForm
 
 class DeletePollView(DeleteView):
 	model = Question
@@ -129,7 +136,7 @@ class IndexView(ListView):
 		context.update(polluser=self.request.user)
 		return context
 
-class VoteView(UpdateView):
+class VotePollView(UpdateView):
 	pass
-class ResultsView(DetailView):
+class ResultsPollView(DetailView):
 	pass
