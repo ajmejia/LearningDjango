@@ -24,5 +24,8 @@ input[type="submit"] {
   text-decoration: none;
   font-size: 1.4em;
   color: #44403f; }
+  input[type="submit"]:hover {
+    boder: 2px solid #e69f5e;
+    color: #e69f5e; }
 
 /*# sourceMappingURL=form_style.css.map */
