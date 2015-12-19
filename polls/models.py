@@ -91,6 +91,28 @@ class LoginForm(forms.Form):
 				raise forms.ValidationError("%s does not exist."%data)
 			return data			
 
+class UserAccountForm(forms.ModelForm):
+	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=True, widget=forms.PasswordInput)
+
+	class Meta:
+		model = PollUser
+		fields = ("first_name", "last_name", "username", "email", "password", "confirm_password",)
+		widgets = {"password": forms.PasswordInput}
+
+	def clean_confirm_password(self):
+		data = self.cleaned_data.get("confirm_password")
+		password = self.cleaned_data.get("password")
+		if data and password and data != password:
+				raise forms.ValidationError("Passwords do not match.")
+		return data
+		
+	def save(self, commit=True):
+		user = super(UserAccountForm, self).save(commit=False)
+		user.set_password(self.cleaned_data["password"])
+		if commit:
+			user.save()
+		return user
+
 class QuestionForm(forms.ModelForm):
 
 	class Meta:

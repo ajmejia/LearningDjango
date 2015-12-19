@@ -7,7 +7,7 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 from django.utils import timezone
 from django import forms
 
-from .models import PollUser, Choice, Question, SignupForm, LoginForm, QuestionForm, ChoiceForm
+from .models import PollUser, Choice, Question, SignupForm, LoginForm, UserAccountForm, QuestionForm, ChoiceForm
 
 from django.contrib.auth import authenticate, login, logout
 
@@ -71,12 +71,31 @@ class LogoutView(RedirectView):
 		if not isinstance(request.user, PollUser):
 			messages.add_message(request, messages.SUCCESS, "See you soon, %s!"%username)
 		else:
-			messages.add_message(request, messages.SUCCESS, "Sorry, we could not log you out.")
+			messages.add_message(request, messages.SUCCESS, "Sorry, we could not log you out. Contact your favorite developer to fix this.")
 		return super(LogoutView, self).dispatch(request, *args, **kwargs)
 
-class UserUpdate(UpdateView):
+class UserAccountView(UpdateView):
+	template_name = "polls/user_account.html"
 	model = PollUser
-	form_class = SignupForm
+	form_class = UserAccountForm
+
+	def form_valid(self, form):
+		self.object = form.save()
+		username = form.cleaned_data["username"]
+		password = form.cleaned_data["password"]
+
+		polluser = authenticate(username=username, password=password)
+		if polluser != None:
+			if polluser.is_active:
+				login(self.request, polluser)
+				messages.add_message(self.request, messages.SUCCESS, "Your account was update")
+			else:
+				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account was disabled.")
+		else:
+			messages.add_message(self.request, messages.ERROR, "Oh no! Something went wrong. Contact your favorite developer to fix this.")
+			return redirect("polls:signup", permanent=False)
+
+		return redirect("polls:index")
 
 class CreatePollView(CreateView):
 	model = Question

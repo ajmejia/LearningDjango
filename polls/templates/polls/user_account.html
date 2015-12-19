@@ -1,0 +1,46 @@
+{% extends "base_template.html" %}
+
+{% block add_styles %}
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/form_style.css' %}">
+{% endblock %}
+
+{% block flash_messages_block %}
+	{% with flash_messages=form.non_field_errors|add:messages %}
+		{% for message in flash_messages %}
+			<div class="{{ message.tags }}">{{ message }}</div>
+		{% endfor %}
+	{% endwith %}
+{% endblock %}
+
+{% block page_title %}Update your account, {{ polluser.username|capfirst }}{% endblock %}
+
+{% block page_body %}
+	<form action="{% url 'polls:accounts' polluser.pk %}" method="post">
+		{% csrf_token %}
+		<div class="field-wrapper">
+			<label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }} </label>
+			{{ form.first_name }} <span class="form-field-error">{{ form.first_name.errors }}</span>
+			<br>
+			<label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }} </label>
+			{{ form.last_name }} <span class="form-field-error">{{ form.last_name.errors }}</span>
+		</div>
+		<div class="field-wrapper">
+			<label for="{{ form.username.id_for_label }}">{{ form.username.label }} </label>
+			<p>{{ form.username }} <span class="form-field-error">{{ form.username.errors }}</span></p>
+		</div>
+		<div class="field-wrapper">
+			<label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+			<p>{{ form.email }} <span class="form-field-error">{{ form.email.errors }}</span></p>
+		</div>
+		<div class="field-wrapper">
+			<label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+			<p>{{ form.password }} <span class="form-field-error">{{ form.password.errors }}</span></p>
+		</div>
+		<div class="field-wrapper">
+			<label for="{{ form.confirm_password.id_for_label }}">{{ form.confirm_password.label }}</label>
+			<p>{{ form.confirm_password }} <span class="form-field-error">{{ form.confirm_password.errors }}</span></p>
+		</div>
+		<input type="submit" value="Update"/>
+	</form>
+{% endblock %}

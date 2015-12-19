@@ -16,7 +16,7 @@
 			{% with polluser=request.user %}
 				<nav>
 					{% if polluser.is_authenticated %}
-						<a href="#" id="username">{{ polluser.username }}</a>
+						<a href="{% url 'polls:accounts' polluser.pk %}" id="username">{{ polluser.username }}</a>
 						<a href="#{# url 'polls:create' polluser.pk #}">Create</a>
 						<a href="#{# url 'polls:mines' polluser.pk #}">Mines</a>
 						<a href="{% url 'polls:logout' %}">Sign out</a>
