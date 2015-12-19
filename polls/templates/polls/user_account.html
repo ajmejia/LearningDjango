@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block flash_messages_block %}
-	{% with flash_messages=form.non_field_errors|add:messages %}
+	{% with flash_messages=messages %}
 		{% for message in flash_messages %}
 			<div class="{{ message.tags }}">{{ message }}</div>
 		{% endfor %}
@@ -16,6 +16,11 @@
 {% block page_title %}Update your account, {{ polluser.username|capfirst }}{% endblock %}
 
 {% block page_body %}
+	{% with flash_messages=form.non_field_errors %}
+		{% for message in flash_messages %}
+			<div class="error">{{ message }}</div>
+		{% endfor %}
+	{% endwith %}
 	<form action="{% url 'polls:accounts' polluser.pk %}" method="post">
 		{% csrf_token %}
 		<div class="field-wrapper">
