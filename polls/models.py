@@ -46,7 +46,7 @@ class Question(models.Model):
 	created_by = models.ForeignKey(PollUser)
 
 	def __unicode__(self):
-		return force_unicode(self.question_text)
+		return force_unicode(self.question)
 
 class Choice(models.Model):
 	for_question = models.ForeignKey(Question, verbose_name="choice for question")
@@ -54,7 +54,7 @@ class Choice(models.Model):
 	votes = models.IntegerField(default=0)
 
 	def __unicode__(self):
-		return force_unicode(self.choice_text)
+		return force_unicode(self.choice)
 
 class SignupForm(forms.ModelForm):
 	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=True, widget=forms.PasswordInput)
@@ -122,11 +122,16 @@ class PollForm(forms.ModelForm):
 		fields = ("question", "choice1", "choice2")
 
 	def save(self, request, commit=True):
-		question = Question(question=self.cleaned_data["question"], created_on=timezone.now(), created_by=request.user)
-		question.choice_set.add(Choice(for_question_id=question.pk, choice=self.cleaned_data["choice1"]))
-		question.choice_set.add(Choice(for_question_id=question.pk, choice=self.cleaned_data["choice2"]))
+		current_user = PollUser.objects.get(pk=request.user.pk)
+		question = Question(question=self.cleaned_data["question"], created_on=timezone.now(), created_by=current_user)
+		question.save()
+
+		ch1 = Choice(for_question_id=question.pk, choice=self.cleaned_data["choice1"])
+		ch2 = Choice(for_question_id=question.pk, choice=self.cleaned_data["choice2"])
+		question.choice_set.add(ch1)
+		question.choice_set.add(ch2)
 		if commit:
-			question.save()
+			question.save(force_update=True)
 		return question
 
 class ChoiceForm(forms.ModelForm):
