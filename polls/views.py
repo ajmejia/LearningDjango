@@ -97,7 +97,7 @@ class UserAccountView(UpdateView):
 
 		return redirect("polls:index")
 
-class CreatePollView(CreateView):
+class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"
 	model = Question
 	form_class = PollForm
@@ -138,5 +138,6 @@ class IndexView(ListView):
 
 class VotePollView(UpdateView):
 	pass
+
 class ResultsPollView(DetailView):
 	pass

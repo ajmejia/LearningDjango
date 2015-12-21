@@ -28,6 +28,8 @@ EMAIL_MAX_LENGTH = 100
 
 QUESTION_MAX_LENGTH = 200
 CHOICE_MAX_LENGTH = 200
+CHOICE_MIN_FIELDS = 2
+CHOICE_MAX_FIELDS = 7
 
 class PollUser(User):
 #	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
@@ -114,28 +116,27 @@ class UserAccountForm(forms.ModelForm):
 		return user
 
 class PollForm(forms.ModelForm):
-	choice1 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="Choice 1")
-	choice2 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="Choice 2")
+	choice1 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
+	choice2 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
+	choice3 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
+	choice4 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
+	choice5 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
+	choice6 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
+	choice7 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
+	nactive = forms.IntField(initial=CHOICE_MIN_FIELDS, min_value=CHOICE_MIN_FIELDS, max_value=CHOICE_MAX_FIELDS, widget=forms.HiddenInput)
 
 	class Meta:
 		model = Question
-		fields = ("question", "choice1", "choice2")
+		fields = ("question",) + tuple("choice"+str(i+1) for i in xrange(CHOICE_MAX_FIELDS))
 
 	def save(self, request, commit=True):
 		current_user = PollUser.objects.get(pk=request.user.pk)
 		question = Question(question=self.cleaned_data["question"], created_on=timezone.now(), created_by=current_user)
 		question.save()
 
-		ch1 = Choice(for_question_id=question.pk, choice=self.cleaned_data["choice1"])
-		ch2 = Choice(for_question_id=question.pk, choice=self.cleaned_data["choice2"])
-		question.choice_set.add(ch1)
-		question.choice_set.add(ch2)
+		for i in xrange(self.cleanded_data["nactive"]):
+			question.choice_set.add(Choice(for_question_id=question.pk, choice=self.cleaned_data["choice1"]))
+
 		if commit:
 			question.save(force_update=True)
 		return question
-
-class ChoiceForm(forms.ModelForm):
-
-	class Meta:
-		model = Choice
-		fields = ("choice",)
