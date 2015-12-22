@@ -104,8 +104,8 @@ class CreatePollView(FormView):
 		return render(request, self.template_name, context={"question_form": QuestionForm(), "choice_forms": ChoiceFormset()})
 
 	def post(self, request):
-		choice_forms = ChoiceFormset(request.POST)
 		question_form = QuestionForm(request.POST)
+		choice_forms = ChoiceFormset(request.POST)
 
 		if question_form.is_valid() and choice_forms.is_valid():
 			return self.form_valid((question_form, choice_forms))

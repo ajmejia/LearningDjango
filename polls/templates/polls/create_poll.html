@@ -1,8 +1,11 @@
 {% extends "base_template.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
 
 {% block add_styles %}
-	{% load staticfiles %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/form_style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/form_style.css' %}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="{% static 'polls/js/dynamic-forms.js' %}"></script>
 {% endblock %}
 
 {% block flash_messages_block %}
@@ -23,16 +26,57 @@
 	{% endwith %}
 	<form action="{% url 'polls:create-poll' %}" method="post">
 		{% csrf_token %}
-		<div class="field-wrapper">
-			<label for="{{ question_form.id_for_label }}">{{ question_form.label }} </label>
-			<p>{{ question_form }} <span class="form-field-error">{{ question_form.errors }}</span></p>
+		{{ question_form }}
+		<div id="formset-placeholder">
+			{{ choice_forms.management_form }}
+			<div class="dynamic-form">
+				{% for choice_form in choice_forms %}
+						<input type="button" class="delete-form-row" value="delete">
+						{{ choice_form.choice }}
+				{% endfor %}
+			</div>
 		</div>
-		{{ choice_forms.management_form }}
-		{% for choice_form in choice_forms %}
-		<div class="field-wrapper">
-			<p>{{ choice_form }} <span class="form-field-error">{{ choice_form.errors }}</span></p>
-		</div>
-		{% endfor %}
 		<input type="submit" value="Create"/>
+		<input type="button" class="add-form-row" value="add">
 	</form>
+{% endblock %}
+
+{% block js %}
+	<script>
+		var callbacks = {
+			"setup": function(choice_form) {
+			$(choice_form.form_selector).find(".delete-form-row").click( function(e) {
+				e.preventDefault();
+				choice_form.delete_form(this);
+			});
+			$(".add-form-row").click( function(e) {
+					e.preventDefault();
+					choice_form.add_form();
+				});
+			}, 
+		
+			"add_form": function(choice_form, form, index) {
+				$(form).find(".delete-form-row").click( function(e) {
+					e.preventDefault();
+					choice_form.delete_form(this);
+			});
+			if (index % 2 !== 0)
+				$(form).removeClass("light");
+			},
+			
+			"update_all": function(choice_form, form, index) {
+				if (index % 2 === 0)
+					$(form).addClass("light");
+				else
+					$(form).removeClass("light");
+			}
+		};
+		
+		var choice_form = new Formset();
+		
+		choice_form.setup({
+			prefix: "{{ choice_forms.prefix }}",
+			callbacks: callbacks
+		});
+	</script>
 {% endblock %}

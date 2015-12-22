@@ -4,9 +4,9 @@
     <!-- This will load the static tag used below to target the css file -->
     {% load staticfiles %}
     <title>Polls Site</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'polls/normalize.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/css/normalize.css' %}">
     <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="{% static 'polls/base_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/css/base_style.css' %}">
     {% block add_styles %}
     {% endblock %}
   </head>
@@ -38,5 +38,8 @@
 				{% endblock %}
 			</div>
 		</div>
+		
+		{% block js %}
+		{% endblock %}
 	</body>
 </html>
