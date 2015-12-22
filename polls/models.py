@@ -115,28 +115,17 @@ class UserAccountForm(forms.ModelForm):
 			user.save()
 		return user
 
-class PollForm(forms.ModelForm):
-	choice1 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
-	choice2 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
-	choice3 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
-	choice4 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
-	choice5 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
-	choice6 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
-	choice7 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="")
-	nactive = forms.IntField(initial=CHOICE_MIN_FIELDS, min_value=CHOICE_MIN_FIELDS, max_value=CHOICE_MAX_FIELDS, widget=forms.HiddenInput)
+class QuestionForm(forms.ModelForm):
 
 	class Meta:
 		model = Question
-		fields = ("question",) + tuple("choice"+str(i+1) for i in xrange(CHOICE_MAX_FIELDS))
+		fields = ("question",)
 
-	def save(self, request, commit=True):
-		current_user = PollUser.objects.get(pk=request.user.pk)
-		question = Question(question=self.cleaned_data["question"], created_on=timezone.now(), created_by=current_user)
-		question.save()
+class ChoiceForm(forms.ModelForm):
 
-		for i in xrange(self.cleanded_data["nactive"]):
-			question.choice_set.add(Choice(for_question_id=question.pk, choice=self.cleaned_data["choice1"]))
+	class Meta:
+		model = Choice
+		fields = ("choice",)
 
-		if commit:
-			question.save(force_update=True)
-		return question
+ChoiceFormset = forms.formset_factory(ChoiceForm, extra=CHOICE_MIN_FIELDS, min_num=CHOICE_MIN_FIELDS,
+                                      max_num=CHOICE_MAX_FIELDS, validate_min=True, validate_max=True)

@@ -24,17 +24,15 @@
 	<form action="{% url 'polls:create-poll' %}" method="post">
 		{% csrf_token %}
 		<div class="field-wrapper">
-			<label for="{{ form.question.id_for_label }}">{{ form.question.label }} </label>
-			<p>{{ form.question }} <span class="form-field-error">{{ form.question.errors }}</span></p>
+			<label for="{{ question_form.id_for_label }}">{{ question_form.label }} </label>
+			<p>{{ question_form }} <span class="form-field-error">{{ question_form.errors }}</span></p>
 		</div>
+		{{ choice_forms.management_form }}
+		{% for choice_form in choice_forms %}
 		<div class="field-wrapper">
-			<label for="{{ form.choice1.id_for_label }}">{{ form.choice1.label }}</label>
-			<p>{{ form.choice1 }} <span class="form-field-error">{{ form.choice1.errors }}</span></p>
+			<p>{{ choice_form }} <span class="form-field-error">{{ choice_form.errors }}</span></p>
 		</div>
-		<div class="field-wrapper">
-			<label for="{{ form.choice2.id_for_label }}">{{ form.choice2.label }}</label>
-			<p>{{ form.choice2 }} <span class="form-field-error">{{ form.choice2.errors }}</span></p>
-		</div>
+		{% endfor %}
 		<input type="submit" value="Create"/>
 	</form>
 {% endblock %}
