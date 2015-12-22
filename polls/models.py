@@ -64,13 +64,13 @@ class SignupForm(forms.ModelForm):
 		fields = ("username", "email", "password", "confirm_password",)
 		widgets = {"password": forms.PasswordInput}
 
-	def clean_confirm_password(self):
+	def clean(self):
 		data = self.cleaned_data.get("confirm_password")
 		password = self.cleaned_data.get("password")
 		if data and password and data != password:
 				raise forms.ValidationError("Passwords do not match.")
 		return data
-		
+
 	def save(self, commit=True):
 		user = super(SignupForm, self).save(commit=False)
 		user.set_password(self.cleaned_data["password"])

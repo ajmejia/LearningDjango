@@ -1,7 +1,7 @@
 {% extends "base_template.html" %}
+{% load staticfiles %}
 
 {% block add_styles %}
-	{% load staticfiles %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/form_style.css' %}">
 {% endblock %}
 
@@ -16,11 +16,13 @@
 {% block page_title %}Create your poll{% endblock %}
 
 {% block page_body %}
-	{% with flash_messages=form.non_field_errors %}
-		{% for message in flash_messages %}
-			<div class="error">{{ message }}</div>
-		{% endfor %}
-	{% endwith %}
+	<div id="form-message-container">
+		{% with flash_messages=form.non_field_errors %}
+			{% for message in flash_messages %}
+				<div class="error">{{ message }}</div>
+			{% endfor %}
+		{% endwith %}
+	</div>
 	<form action="{% url 'polls:create-poll' %}" method="post">
 		{% csrf_token %}
 		<div class="field-wrapper">

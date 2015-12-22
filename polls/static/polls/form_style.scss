@@ -6,6 +6,12 @@
 	padding: 2em 2em;
 	text-align: left;
 	box-shadow: 0px 10px 5px $light;
+	#form-message-container {
+		height: 2em;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
 	p {
 		margin: 0;
 		padding: 0;
