@@ -3,6 +3,13 @@
 body {
 	font-family: 'Lato', sans-serif;
 	color: $dark;
+	a {
+		text-decoration: none;
+		color: $dark;
+		&:hover {
+			color: $highlight;
+		}
+	}
 }
 #navigation {
 	padding: 2em 5%;
@@ -20,8 +27,6 @@ body {
 		a {
 			margin: 0 0.7em;
 			font-size: 1em;
-			text-decoration: none;
-			color: $dark;
 			}
 		#username {
 			margin: 0 2em;

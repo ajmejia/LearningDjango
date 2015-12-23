@@ -1,6 +1,11 @@
 body {
   font-family: 'Lato', sans-serif;
   color: #44403f; }
+  body a {
+    text-decoration: none;
+    color: #44403f; }
+    body a:hover {
+      color: #e69f5e; }
 
 #navigation {
   padding: 2em 5%; }
@@ -16,9 +21,7 @@ body {
     float: right; }
     #navigation nav a {
       margin: 0 0.7em;
-      font-size: 1em;
-      text-decoration: none;
-      color: #44403f; }
+      font-size: 1em; }
     #navigation nav #username {
       margin: 0 2em;
       font-weight: 700;

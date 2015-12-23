@@ -49,6 +49,9 @@ class Question(models.Model):
 
 	def __unicode__(self):
 		return force_unicode(self.question)
+		
+	def get_total_votes(self):
+		return sum([choice.votes for choice in self.choice_set.all()])
 
 class Choice(models.Model):
 	for_question = models.ForeignKey(Question, verbose_name="choice for question")

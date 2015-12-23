@@ -123,9 +123,6 @@ class CreatePollView(FormView):
 			
 		return redirect("polls:index")
 
-class UpdatePollView(UpdateView):
-	model = Question
-
 class DeletePollView(DeleteView):
 	model = Question
 

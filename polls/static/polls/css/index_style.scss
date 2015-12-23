@@ -1,11 +1,42 @@
 @import "color_style";
 
+.clearfix:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}
+
 #page-body {
 	min-height: 500px;
 	width: 70%;
 	margin: 0 auto;
+	padding: 2rem;
 	text-align: center;
 	box-shadow: 0px 10px 5px $light;
+	.poll-container {
+		margin-top: 1.5rem;
+		padding-bottom: 4px;
+		border-bottom: 4px solid $light;
+		text-align: left;
+		.question-list {
+			font-size: 1.5rem;
+			font-weight: 700;
+			font-color: $dark;
+		}
+		.date-list {
+			margin: 2px 0 0 0;
+			font-size: 0.7rem;
+			font-color: $light;
+		}
+		.voted {
+			font-size: 0.7rem;
+			font-weight: 700;
+			float: right;
+		}
+	}
 }
 
 #empty {

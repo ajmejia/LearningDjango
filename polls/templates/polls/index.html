@@ -1,7 +1,7 @@
 {% extends "base_template.html" %}
+{% load staticfiles %}
 
 {% block add_styles %}
-	{% load staticfiles %}
 	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/index_style.css' %}">
 {% endblock %}
 
@@ -18,9 +18,10 @@
 {% block page_body %}
 	{% if object_list %}
 		{% for poll in object_list %}
-			<div class="poll-container">
+			<div class="poll-container clearfix">
 				<a href="{% url 'polls:vote' poll.pk %}" class="question-list">{{ poll.question }}</a>
-				<p class="date-list">{{ poll.pub_date }}</p>
+				<p class="date-list">{{ poll.created_on|date:"D d F Y" }}</p>
+				<a href="{% url 'polls:results' poll.pk %}" class="voted">voted {{ poll.get_total_votes }} time{{ poll.get_total_votes|pluralize }}</a>
 			</div>
 		{% endfor %}
 	{% else %}
