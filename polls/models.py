@@ -65,11 +65,11 @@ class SignupForm(forms.ModelForm):
 		widgets = {"password": forms.PasswordInput}
 
 	def clean(self):
+		super(SignupForm, self).clean()
 		data = self.cleaned_data.get("confirm_password")
 		password = self.cleaned_data.get("password")
 		if data and password and data != password:
 				raise forms.ValidationError("Passwords do not match.")
-		return data
 
 	def save(self, commit=True):
 		user = super(SignupForm, self).save(commit=False)
@@ -92,23 +92,24 @@ class LoginForm(forms.Form):
 			return data			
 
 class UserAccountForm(forms.ModelForm):
-	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=True, widget=forms.PasswordInput)
+	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
+	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
 
 	class Meta:
 		model = PollUser
 		fields = ("first_name", "last_name", "username", "email", "password", "confirm_password",)
-		widgets = {"password": forms.PasswordInput}
 
-	def clean_confirm_password(self):
+	def clean(self):
+		super(UserAccountForm, self).clean()
 		data = self.cleaned_data.get("confirm_password")
 		password = self.cleaned_data.get("password")
 		if data and password and data != password:
 				raise forms.ValidationError("Passwords do not match.")
-		return data
 		
 	def save(self, commit=True):
 		user = super(UserAccountForm, self).save(commit=False)
-		user.set_password(self.cleaned_data["password"])
+		password = self.cleaned_data.get("password")
+		if password: user.set_password(password)
 		if commit:
 			user.save()
 		return user

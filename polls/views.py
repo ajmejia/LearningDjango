@@ -81,20 +81,8 @@ class UserAccountView(UpdateView):
 
 	def form_valid(self, form):
 		self.object = form.save()
-		username = form.cleaned_data["username"]
-		password = form.cleaned_data["password"]
 
-		polluser = authenticate(username=username, password=password)
-		if polluser != None:
-			if polluser.is_active:
-				login(self.request, polluser)
-				messages.add_message(self.request, messages.SUCCESS, "Your account was update")
-			else:
-				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account was disabled.")
-		else:
-			messages.add_message(self.request, messages.ERROR, "Oh no! Something went wrong. Contact your favorite developer to fix this.")
-			return redirect("polls:signup", permanent=False)
-
+		messages.add_message(self.request, messages.SUCCESS, "Your account was updated.")
 		return redirect("polls:index")
 
 class CreatePollView(CreateView):
