@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, render_to_response, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.urlresolvers import reverse, reverse_lazy
 
@@ -7,7 +7,7 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 from django.utils import timezone
 from django import forms
 
-from .models import PollUser, Choice, Question, SignupForm, LoginForm, UserAccountForm, PollForm
+from .models import PollUser, Choice, Question, SignupForm, LoginForm, UserAccountForm, QuestionForm, ChoiceFormset
 
 from django.contrib.auth import authenticate, login, logout
 
@@ -85,20 +85,46 @@ class UserAccountView(UpdateView):
 		messages.add_message(self.request, messages.SUCCESS, "Your account was updated.")
 		return redirect("polls:index")
 
-class CreatePollView(CreateView):
+class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"
-	model = Question
-	form_class = PollForm
-	
-	def form_valid(self, form):
-		self.object = form.save(self.request)
-		
-		messages.add_message(self.request, messages.SUCCESS, "Yei! You opened a new poll!")
+
+	def get(self, request):
+		return render(request, self.template_name, context={"question_form": QuestionForm(), "choice_forms": ChoiceFormset()})
+
+	def post(self, request):
+		question_form = QuestionForm(request.POST)
+		choice_forms = ChoiceFormset(request.POST)
+
+		if question_form.is_valid() and choice_forms.is_valid():
+			return self.form_valid((question_form, choice_forms))
+		else:
+			return self.form_invalid((question_form, choice_forms))
+
+	def get_form(self):
+		return QuestionForm(), ChoiceFormset()
+
+	def form_invalid(self, forms):
+		question_form, choice_forms = forms
+		return render(self.request, self.template_name, context={"question_form": question_form, "choice_forms": choice_forms})
+
+	def form_valid(self, forms):
+		question_form, choice_forms = forms
+
+		current_user = PollUser.objects.get(id=self.request.user.id)
+		question = Question(question=question_form.cleaned_data["question"],
+		                    created_on=timezone.now(),
+		                    created_by=current_user,
+		                   )
+		question.save()
+		choices = []
+		for choice_form in choice_forms:
+			choice = Choice(for_question_id=question.id, choice=choice_form.cleaned_data["choice"])
+			choice.save()
+			
 		return redirect("polls:index")
 
 class UpdatePollView(UpdateView):
 	model = Question
-	form_class = PollForm
 
 class DeletePollView(DeleteView):
 	model = Question
@@ -126,5 +152,6 @@ class IndexView(ListView):
 
 class VotePollView(UpdateView):
 	pass
+
 class ResultsPollView(DetailView):
 	pass

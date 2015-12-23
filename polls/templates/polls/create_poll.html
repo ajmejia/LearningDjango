@@ -1,8 +1,11 @@
 {% extends "base_template.html" %}
+{% load crispy_forms_tags %}
 {% load staticfiles %}
 
 {% block add_styles %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/form_style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/form_style.css' %}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="{% static 'polls/js/dynamic-forms.js' %}"></script>
 {% endblock %}
 
 {% block flash_messages_block %}
@@ -16,27 +19,65 @@
 {% block page_title %}Create your poll{% endblock %}
 
 {% block page_body %}
-	<div id="form-message-container">
-		{% with flash_messages=form.non_field_errors %}
-			{% for message in flash_messages %}
-				<div class="error">{{ message }}</div>
-			{% endfor %}
-		{% endwith %}
-	</div>
+	{% with flash_messages=question_form.non_field_errors|add:choice_forms.non_form_errors %}
+		{% for message in flash_messages %}
+			<div class="error">{{ message }}</div>
+		{% endfor %}
+	{% endwith %}
 	<form action="{% url 'polls:create-poll' %}" method="post">
 		{% csrf_token %}
-		<div class="field-wrapper">
-			<label for="{{ form.question.id_for_label }}">{{ form.question.label }} </label>
-			<p>{{ form.question }} <span class="form-field-error">{{ form.question.errors }}</span></p>
-		</div>
-		<div class="field-wrapper">
-			<label for="{{ form.choice1.id_for_label }}">{{ form.choice1.label }}</label>
-			<p>{{ form.choice1 }} <span class="form-field-error">{{ form.choice1.errors }}</span></p>
-		</div>
-		<div class="field-wrapper">
-			<label for="{{ form.choice2.id_for_label }}">{{ form.choice2.label }}</label>
-			<p>{{ form.choice2 }} <span class="form-field-error">{{ form.choice2.errors }}</span></p>
+		{{ question_form }}
+		<label>Choices</label>
+		<div id="formset-placeholder">
+			{{ choice_forms.management_form }}
+			{% for choice_form in choice_forms.forms %}
+				<div class="dynamic-form">
+						<input type="button" id="delete" class="delete-form-row" value="delete">
+						{{ choice_form.choice }}
+				</div>
+			{% endfor %}
 		</div>
 		<input type="submit" value="Create"/>
+		<input type="button" id="add" class="add-form-row" value="add">
 	</form>
+{% endblock %}
+
+{% block js %}
+	<script>
+		var callbacks = {
+			"setup": function(choice_form) {
+			$(choice_form.form_selector).find(".delete-form-row").click( function(e) {
+				e.preventDefault();
+				choice_form.delete_form(this);
+			});
+			$(".add-form-row").click( function(e) {
+					e.preventDefault();
+					choice_form.add_form();
+				});
+			}, 
+		
+			"add_form": function(choice_form, form, index) {
+				$(form).find(".delete-form-row").click( function(e) {
+					e.preventDefault();
+					choice_form.delete_form(this);
+			});
+			if (index % 2 !== 0)
+				$(form).removeClass("light");
+			},
+			
+			"update_all": function(choice_form, form, index) {
+				if (index % 2 === 0)
+					$(form).addClass("light");
+				else
+					$(form).removeClass("light");
+			}
+		};
+		
+		var choice_form = new Formset();
+		
+		choice_form.setup({
+			prefix: "{{ choice_forms.prefix }}",
+			callbacks: callbacks
+		});
+	</script>
 {% endblock %}

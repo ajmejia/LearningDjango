@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',      #- A session framework                   (?)
     'django.contrib.messages',      #- Allows using flash-massaging across views (recommended with redirect requests)
     'django.contrib.staticfiles',   #- A framework for managing static files (?)
+    'crispy_forms',
     'polls'                         #- This is the application I created to handle the polls.
 )
 #- Some of this applications run on database(s) that need to be

@@ -28,6 +28,8 @@ EMAIL_MAX_LENGTH = 100
 
 QUESTION_MAX_LENGTH = 200
 CHOICE_MAX_LENGTH = 200
+CHOICE_MIN_FIELDS = 2
+CHOICE_MAX_FIELDS = 7
 
 class PollUser(User):
 #	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
@@ -114,29 +116,16 @@ class UserAccountForm(forms.ModelForm):
 			user.save()
 		return user
 
-class PollForm(forms.ModelForm):
-	choice1 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="Choice 1")
-	choice2 = forms.CharField(max_length=CHOICE_MAX_LENGTH, required=True, label="Choice 2")
+class QuestionForm(forms.ModelForm):
 
 	class Meta:
 		model = Question
-		fields = ("question", "choice1", "choice2")
-
-	def save(self, request, commit=True):
-		current_user = PollUser.objects.get(pk=request.user.pk)
-		question = Question(question=self.cleaned_data["question"], created_on=timezone.now(), created_by=current_user)
-		question.save()
-
-		ch1 = Choice(for_question_id=question.pk, choice=self.cleaned_data["choice1"])
-		ch2 = Choice(for_question_id=question.pk, choice=self.cleaned_data["choice2"])
-		question.choice_set.add(ch1)
-		question.choice_set.add(ch2)
-		if commit:
-			question.save(force_update=True)
-		return question
+		fields = ("question",)
 
 class ChoiceForm(forms.ModelForm):
 
 	class Meta:
 		model = Choice
 		fields = ("choice",)
+
+ChoiceFormset = forms.formset_factory(ChoiceForm, extra=0, min_num=2, validate_min=True)
