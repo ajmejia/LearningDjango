@@ -19,7 +19,7 @@
 {% block page_title %}Create your poll{% endblock %}
 
 {% block page_body %}
-	{% with flash_messages=form.non_field_errors %}
+	{% with flash_messages=question_form.non_field_errors|add:choice_forms.non_form_errors %}
 		{% for message in flash_messages %}
 			<div class="error">{{ message }}</div>
 		{% endfor %}
@@ -27,17 +27,18 @@
 	<form action="{% url 'polls:create-poll' %}" method="post">
 		{% csrf_token %}
 		{{ question_form }}
+		<label>Choices</label>
 		<div id="formset-placeholder">
 			{{ choice_forms.management_form }}
-			<div class="dynamic-form">
-				{% for choice_form in choice_forms %}
-						<input type="button" class="delete-form-row" value="delete">
+			{% for choice_form in choice_forms.forms %}
+				<div class="dynamic-form">
+						<input type="button" id="delete" class="delete-form-row" value="delete">
 						{{ choice_form.choice }}
-				{% endfor %}
-			</div>
+				</div>
+			{% endfor %}
 		</div>
 		<input type="submit" value="Create"/>
-		<input type="button" class="add-form-row" value="add">
+		<input type="button" id="add" class="add-form-row" value="add">
 	</form>
 {% endblock %}
 

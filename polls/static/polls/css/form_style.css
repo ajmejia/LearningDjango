@@ -16,16 +16,19 @@ input[type="text"], input[type="email"], input[type="password"] {
   padding: 0.5em;
   border: 2px solid #44403f; }
 
-input[type="submit"] {
+input[type="submit"], input[type="button"] {
   outline: none;
   background: transparent;
   border: 2px solid #44403f;
   text-align: center;
   text-decoration: none;
-  font-size: 1.4em;
+  font-size: 1rem;
   color: #44403f; }
-  input[type="submit"]:hover {
+  input[type="submit"]:hover, input[type="button"]:hover {
     boder: 2px solid #e69f5e;
     color: #e69f5e; }
+
+#delete {
+  float: right; }
 
 /*# sourceMappingURL=form_style.css.map */

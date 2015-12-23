@@ -126,6 +126,5 @@ class ChoiceForm(forms.ModelForm):
 	class Meta:
 		model = Choice
 		fields = ("choice",)
-#		widgets = {"choice": forms.TextInput(attrs={"class": "dynamic-form"}),}
 
-ChoiceFormset = forms.formset_factory(ChoiceForm, extra=1)
+ChoiceFormset = forms.formset_factory(ChoiceForm, extra=0, min_num=2, validate_min=True)
