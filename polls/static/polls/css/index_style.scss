@@ -31,7 +31,13 @@
 			font-size: 0.7rem;
 			font-color: $light;
 		}
+		.update,.delete {
+			margin-right: 0.5rem;
+			float: right;
+			font-size: 0.7rem;
+		}
 		.voted {
+			margin-left: 0.5rem;
 			font-size: 0.7rem;
 			font-weight: 700;
 			float: right;

@@ -26,7 +26,12 @@
       margin: 2px 0 0 0;
       font-size: 0.7rem;
       font-color: #a9a2a2; }
+    #page-body .poll-container .update, #page-body .poll-container .delete {
+      margin-right: 0.5rem;
+      float: right;
+      font-size: 0.7rem; }
     #page-body .poll-container .voted {
+      margin-left: 0.5rem;
       font-size: 0.7rem;
       font-weight: 700;
       float: right; }

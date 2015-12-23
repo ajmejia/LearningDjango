@@ -21,7 +21,9 @@
 			<div class="poll-container clearfix">
 				<a href="{% url 'polls:vote' poll.pk %}" class="question-list">{{ poll.question }}</a>
 				<p class="date-list">{{ poll.created_on|date:"D d F Y" }}</p>
-				<a href="{% url 'polls:results' poll.pk %}" class="voted">voted {{ poll.get_total_votes }} time{{ poll.get_total_votes|pluralize }}</a>
+				<a href="{% url 'polls:results' poll.pk %}" class="voted">Voted {{ poll.get_total_votes }} time{{ poll.get_total_votes|pluralize }}</a>
+				<a href="{% url 'polls:delete-poll' poll.pk %}" class="delete">Delete</a>
+				<a href="{% url 'polls:update-poll' poll.pk %}" class="update">Update</a>
 			</div>
 		{% endfor %}
 	{% else %}

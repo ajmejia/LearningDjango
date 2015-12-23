@@ -123,8 +123,17 @@ class CreatePollView(FormView):
 			
 		return redirect("polls:index")
 
-class DeletePollView(DeleteView):
+class UpdatePollView(UpdateView):
 	model = Question
+
+class DeletePollView(RedirectView):
+	permanent = False
+	pattern_name = "polls:index"
+	
+	def dispatch(self, request, *args, **kwargs):
+		question = Question.objects.get(pk=kwargs.pop("pk"))
+		question.delete()
+		return super(DeletePollView, self).dispatch(request, *args, **kwargs)
 
 class IndexView(ListView):
 	"""
