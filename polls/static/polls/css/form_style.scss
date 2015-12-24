@@ -49,21 +49,41 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 
 input[type="submit"], input[type="button"] {
+	width: 5rem;
 	padding: 0.5rem 1rem;
 	outline: none;
-	border: 1px solid $dark;
+	border: none;
 	border-radius: 4px;
-	background: transparent;
 	text-align: center;
 	text-decoration: none;
 	font-size: 1rem;
-	color: $dark;
+	color: white;
+}
+
+input[type="submit"] {
+	background-color: $highlight;
 	&:hover,&:focus {
-		border: 1px solid $light;
-		color: $light;
+		background-color: darken($highlight, 5%);
 	}
 }
 
-#delete,#add {
+input[type="button"] {
+	width: 3.5rem;
+	padding: 0.5rem 0;
 	float: right;
+	font-size: 0.7rem;
+}
+
+input[type="button"].add-form-row {
+	background-color: $highlight;
+	&:hover,&:focus {
+		background-color: darken($highlight, 5%);
+	}
+}
+
+input[type="button"].delete-form-row {
+	background-color: $light;
+	&:hover,&:focus {
+		background-color: darken($light, 5%);
+	}
 }

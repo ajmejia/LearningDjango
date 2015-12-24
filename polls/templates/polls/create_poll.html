@@ -36,9 +36,10 @@
 		<div id="formset-placeholder">
 			{{ choice_forms.management_form }}
 			<label>Choices</label>
+			<input type="button" class="add-form-row" value="add">
 			{% for choice_form in choice_forms.forms %}
 				<div class="dynamic-form">
-						<input type="button" id="delete" class="delete-form-row" value="delete">
+						<input type="button" class="delete-form-row" value="delete">
 						{{ choice_form.choice }}
 						<div class="error-field">
 							{{ choice_form.choice.errors }}
@@ -47,7 +48,6 @@
 			{% endfor %}
 		</div>
 		<input type="submit" value="Create"/>
-		<input type="button" id="add" class="add-form-row" value="add">
 	</form>
 {% endblock %}
 
