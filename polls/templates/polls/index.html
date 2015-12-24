@@ -21,7 +21,7 @@
 			<div class="poll-container clearfix">
 				<div class="poll-item">
 					<a href="{% url 'polls:vote' poll.pk %}" class="question">{{ poll.question }}</a>
-					<p class="date">{{ poll.created_on|date:"D d F Y" }}</p>
+					<p class="date">Opened on {{ poll.created_on|date:"d M Y" }} by {{ poll.created_by }}</p>
 				</div>
 				<div class="poll-info">
 					<a href="{% url 'polls:update-poll' poll.pk %}" class="update">Update</a>
