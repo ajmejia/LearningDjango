@@ -1,22 +1,46 @@
+/* apply a natural box layout model to all elements */
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0; }
+
 body {
+  background-color: #f2f2f2;
   font-family: 'Lato', sans-serif;
-  color: #44403f; }
+  color: #808080; }
+  body h1 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    font-weight: 300;
+    text-align: center; }
   body a {
     text-decoration: none;
-    color: #44403f; }
+    color: #808080; }
     body a:hover {
-      color: #e69f5e; }
+      color: #008066; }
+
+div, #navigation {
+  background-color: white; }
 
 #navigation {
-  padding: 2em 5%; }
+  padding: 1rem 15%; }
   #navigation #logo {
+    float: left;
     font-weight: 700;
     font-size: 1em;
     text-transform: uppercase;
     text-decoration: none;
     letter-spacing: 0.2em;
-    float: left;
-    color: #44403f; }
+    color: #808080; }
   #navigation nav {
     float: right; }
     #navigation nav a {
@@ -26,9 +50,10 @@ body {
       margin: 0 2em;
       font-weight: 700;
       text-transform: capitalize;
-      color: #e69f5e; }
+      color: #008066; }
 
 #flash-message-container {
+  background-color: #f2f2f2;
   height: 2em;
   width: 100%;
   margin: 0;
@@ -66,11 +91,5 @@ div.error {
   text-align: center;
   color: #cc0000;
   background-color: #ffcccc; }
-
-#page-container {
-  min-height: 500px;
-  text-align: center; }
-  #page-container #page-title {
-    text-transform: uppercase; }
 
 /*# sourceMappingURL=base_style.css.map */

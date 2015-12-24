@@ -5,13 +5,13 @@
     {% load staticfiles %}
     <title>Polls Site</title>
     <link rel="stylesheet" type="text/css" href="{% static 'polls/css/normalize.css' %}">
-    <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="{% static 'polls/css/base_style.css' %}">
     {% block add_styles %}
     {% endblock %}
   </head>
   <body>
-		<header id="navigation">
+		<header id="navigation" class="clearfix">
 			<a href="{% url 'polls:index' %}" id="logo">polls</a>
 			{% with polluser=request.user %}
 				<nav>
@@ -31,13 +31,11 @@
 			{% block flash_messages_block %}
 			{% endblock %}
 		</div>
-		<div id="page-container">
-			<h1 id="page-title">{% block page_title %}{% endblock %}</h1>
 			<div id="page-body">
+				<h1 id="page-title">{% block page_title %}{% endblock %}</h1>
 				{% block page_body %}
 				{% endblock %}
 			</div>
-		</div>
 		
 		{% block js %}
 		{% endblock %}

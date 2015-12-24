@@ -27,19 +27,31 @@
 		{% csrf_token %}
 		<div class="field-wrapper">
 			<label for="{{ form.username.id_for_label }}">{{ form.username.label }} </label>
-			<p>{{ form.username }} <span class="form-field-error">{{ form.username.errors }}</span></p>
+			{{ form.username }}
+			<div class="error-field">
+				{{ form.username.errors }}
+			</div>
 		</div>
 		<div class="field-wrapper">
 			<label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-			<p>{{ form.email }} <span class="form-field-error">{{ form.email.errors }}</span></p>
+			{{ form.email }}
+			<div class="error-field">
+				{{ form.email.errors }}
+			</div>
 		</div>
 		<div class="field-wrapper">
 			<label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-			<p>{{ form.password }} <span class="form-field-error">{{ form.password.errors }}</span></p>
+			{{ form.password }}
+			<div class="error-field">
+				{{ form.password.errors }}
+			</div>
 		</div>
 		<div class="field-wrapper">
 			<label for="{{ form.confirm_password.id_for_label }}">{{ form.confirm_password.label }}</label>
-			<p>{{ form.confirm_password }} <span class="form-field-error">{{ form.confirm_password.errors }}</span></p>
+			{{ form.confirm_password }}
+			<div class="error-field">
+				{{ form.confirm_password.errors }}
+			</div>
 		</div>
 		<input type="submit" value="Sign up"/>
 	</form>

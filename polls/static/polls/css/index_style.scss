@@ -1,46 +1,59 @@
 @import "color_style";
 
-.clearfix:after {
-	visibility: hidden;
-	display: block;
-	font-size: 0;
-	content: " ";
-	clear: both;
-	height: 0;
-}
-
 #page-body {
 	min-height: 500px;
 	width: 70%;
 	margin: 0 auto;
-	padding: 2rem;
+	padding: 1rem 2rem;
 	text-align: center;
-	box-shadow: 0px 10px 5px $light;
+	border-radius: 5px;
+	box-shadow: 0px 10px 5px $dark;
 	.poll-container {
-		margin-top: 1.5rem;
+		margin-top: 3rem;
 		padding-bottom: 4px;
-		border-bottom: 4px solid $light;
+		border-bottom: 2px solid $light;
 		text-align: left;
-		.question-list {
-			font-size: 1.5rem;
-			font-weight: 700;
-			font-color: $dark;
+		.poll-item {
+			float: left;
+			.question {
+				font-size: 1.5rem;
+				font-weight: 700;
+				font-color: $dark;
+			}
+			.date {
+				margin: 2px 0 0 0;
+				font-size: 0.7rem;
+				font-color: $light;
+			}
 		}
-		.date-list {
-			margin: 2px 0 0 0;
-			font-size: 0.7rem;
-			font-color: $light;
-		}
-		.update,.delete {
-			margin-right: 0.5rem;
+		.poll-info {
+			margin-top: 1.2rem;
 			float: right;
-			font-size: 0.7rem;
-		}
-		.voted {
-			margin-left: 0.5rem;
-			font-size: 0.7rem;
-			font-weight: 700;
-			float: right;
+			.update,.delete {
+				margin-right: 0.5rem;
+				padding: 0.25rem 0.5rem;
+				font-size: 0.7rem;
+				color: white;
+				border: none;
+				border-radius: 4px;
+			}
+			.update{
+				background-color: $highlight;
+				&:hover,&:focus {
+					background-color: darken($highlight, 5%);
+				}
+			}
+			.delete{
+				background-color: $light;
+				&:hover,&:focus {
+					background-color: darken($light, 5%);
+				}
+			}
+			.voted {
+				margin-left: 0.5rem;
+				font-size: 0.7rem;
+				font-weight: 700;
+			}
 		}
 	}
 }
@@ -48,5 +61,6 @@
 #empty {
 	font-size: 2em;
 	font-weight: 700;
+	line-height: 500px;
 	color: $light;
 }

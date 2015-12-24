@@ -26,12 +26,18 @@
 	<form action="{% url 'polls:login' %}" method="post">
 		{% csrf_token %}
 		<div class="field-wrapper">
-			<label for="{{ form.username.id_for_label }}">{{ form.username.label }} </label>
-			<p>{{ form.username }} <span class="form-field-error">{{ form.username.errors }}</span></p>
+			<label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+			{{ form.username }}
+			<div class="error-field">
+				{{ form.username.errors }}
+			</div>
 		</div>
 		<div class="field-wrapper">
 			<label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-			<p>{{ form.password }} <span class="form-field-error">{{ form.password.errors }}</span></p>
+			{{ form.password }}
+			<div class="error-field">
+				{{ form.password.errors }}
+			</div>
 		</div>
 		<input type="submit" value="Sign in"/>
 	</form>

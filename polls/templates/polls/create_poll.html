@@ -26,14 +26,23 @@
 	{% endwith %}
 	<form action="{% url 'polls:create-poll' %}" method="post">
 		{% csrf_token %}
-		{{ question_form }}
-		<label>Choices</label>
+		<div class="field-wrapper">
+			<label for="{{ question_form.question.label }}">{{ question_form.question.label }}</label>
+			{{ question_form.question }}
+			<div class="error-field">
+				{{ question_form.question.errors }}
+			</div>
+		</div>
 		<div id="formset-placeholder">
 			{{ choice_forms.management_form }}
+			<label>Choices</label>
 			{% for choice_form in choice_forms.forms %}
 				<div class="dynamic-form">
 						<input type="button" id="delete" class="delete-form-row" value="delete">
 						{{ choice_form.choice }}
+						<div class="error-field">
+							{{ choice_form.choice.errors }}
+						</div>
 				</div>
 			{% endfor %}
 		</div>
