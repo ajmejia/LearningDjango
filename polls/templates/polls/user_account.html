@@ -13,7 +13,7 @@
 	{% endwith %}
 {% endblock %}
 
-{% block page_title %}Update your account, {{ polluser.username|capfirst }}{% endblock %}
+{% block page_title %}Update your account, {{ polluser.username }}{% endblock %}
 
 {% block page_body %}
 	<div id="form-message-container">
@@ -26,27 +26,46 @@
 	<form action="{% url 'polls:accounts' polluser.pk %}" method="post">
 		{% csrf_token %}
 		<div class="field-wrapper">
-			<label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }} </label>
-			{{ form.first_name }} <span class="form-field-error">{{ form.first_name.errors }}</span>
-			<br>
-			<label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }} </label>
-			{{ form.last_name }} <span class="form-field-error">{{ form.last_name.errors }}</span>
+			<label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+			{{ form.first_name }}
+			<div class="error-field">
+				{{ form.first_name.errors }}
+			</div>
 		</div>
 		<div class="field-wrapper">
-			<label for="{{ form.username.id_for_label }}">{{ form.username.label }} </label>
-			<p>{{ form.username }} <span class="form-field-error">{{ form.username.errors }}</span></p>
+			<label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+			{{ form.last_name }}
+			<div class="error-field">
+				{{ form.last_name.errors }}
+			</div>
+		</div>
+		<div class="field-wrapper">
+			<label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+			{{ form.username }}
+			<div class="error-field">
+				{{ form.username.errors }}
+			</div>
 		</div>
 		<div class="field-wrapper">
 			<label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-			<p>{{ form.email }} <span class="form-field-error">{{ form.email.errors }}</span></p>
+			{{ form.email }}
+			<div class="error-field">
+				{{ form.email.errors }}
+			</div>
 		</div>
 		<div class="field-wrapper">
 			<label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-			<p>{{ form.password }} <span class="form-field-error">{{ form.password.errors }}</span></p>
+			{{ form.password }}
+			<div class="error-field">
+				{{ form.password.errors }}
+			</div>
 		</div>
 		<div class="field-wrapper">
 			<label for="{{ form.confirm_password.id_for_label }}">{{ form.confirm_password.label }}</label>
-			<p>{{ form.confirm_password }} <span class="form-field-error">{{ form.confirm_password.errors }}</span></p>
+			{{ form.confirm_password }}
+			<div class="error-field">
+				{{ form.confirm_password.errors }}
+			</div>
 		</div>
 		<input type="submit" value="Update"/>
 	</form>

@@ -37,17 +37,18 @@
 				color: white;
 				border: none;
 				border-radius: 4px;
+				transition: 0.5s;
 			}
 			.update{
 				background-color: $highlight;
 				&:hover,&:focus {
-					background-color: darken($highlight, 5%);
+					background-color: darken($highlight, 10%);
 				}
 			}
 			.delete{
 				background-color: $light;
 				&:hover,&:focus {
-					background-color: darken($light, 5%);
+					background-color: darken($light, 10%);
 				}
 			}
 			.voted {

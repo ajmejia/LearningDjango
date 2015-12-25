@@ -1,3 +1,6 @@
+/*
+$highlight: #008066;
+*/
 /* apply a natural box layout model to all elements */
 *, *:before, *:after {
   -moz-box-sizing: border-box;
@@ -26,7 +29,7 @@ body {
     text-decoration: none;
     color: #808080; }
     body a:hover {
-      color: #008066; }
+      color: #2c89a0; }
 
 div, #navigation {
   background-color: white; }
@@ -49,7 +52,7 @@ div, #navigation {
     #navigation nav #username {
       margin: 0 2em;
       font-weight: 700;
-      color: #008066; }
+      color: #2c89a0; }
 
 #flash-message-container {
   background-color: #f2f2f2;

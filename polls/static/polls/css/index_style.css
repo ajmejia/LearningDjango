@@ -1,3 +1,6 @@
+/*
+$highlight: #008066;
+*/
 #page-body {
   min-height: 500px;
   width: 70%;
@@ -31,15 +34,16 @@
         font-size: 0.7rem;
         color: white;
         border: none;
-        border-radius: 4px; }
+        border-radius: 4px;
+        transition: 0.5s; }
       #page-body .poll-container .poll-info .update {
-        background-color: #008066; }
+        background-color: #2c89a0; }
         #page-body .poll-container .poll-info .update:hover, #page-body .poll-container .poll-info .update:focus {
-          background-color: #006752; }
+          background-color: #216778; }
       #page-body .poll-container .poll-info .delete {
         background-color: #d35f5f; }
         #page-body .poll-container .poll-info .delete:hover, #page-body .poll-container .poll-info .delete:focus {
-          background-color: #ce4b4b; }
+          background-color: #c83737; }
       #page-body .poll-container .poll-info .voted {
         margin-left: 0.5rem;
         font-size: 0.7rem;
