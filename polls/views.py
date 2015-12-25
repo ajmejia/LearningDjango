@@ -123,8 +123,92 @@ class CreatePollView(FormView):
 			
 		return redirect("polls:index")
 
-class UpdatePollView(UpdateView):
-	model = Question
+class UpdatePollView(FormView):
+	template_name = "polls/update_poll.html"
+
+	def dispatch(self, request, *args, **kwargs):
+		self.question = Question.objects.get(pk=kwargs.pop("pk"))
+		
+		self.initial_question = {"question": self.question.question}
+		self.choices = self.question.choice_set.all()
+		self.initial_choices_values = [c.choice for c in self.choices]
+		self.num_choices = self.choices.count()
+		
+		self.initial_formset = [{"form-TOTAL_FORMS": self.num_choices,
+		                         "form-INITIAL_FORMS": self.num_choices,
+		                         "form-MIN_NUM_FORMS": 2,
+		                         "form-MAX_NUM_FORMS": 1000}]
+
+		self.initial_choices = []
+		for i in xrange(self.num_choices):
+			self.initial_choices.append(dict(choice=self.choices[i].choice))
+			self.initial_formset.append({"form-"+str(i)+"-choice": self.choices[i].choice})
+
+		return super(UpdatePollView, self).dispatch(request, *args, **kwargs)
+
+	def get(self, request):
+		question_form = QuestionForm(initial=self.initial_question)
+		choice_forms = ChoiceFormset(initial=self.initial_choices)
+		
+		return render(request, self.template_name, context={"question_form": question_form,
+		                                                    "choice_forms": choice_forms,
+		                                                    "poll": self.question})
+
+	def post(self, request):
+		question_form = QuestionForm(data=request.POST, initial=self.initial_question)
+		choice_forms = ChoiceFormset(data=request.POST, initial=self.initial_formset)
+		
+		if question_form.is_valid() and choice_forms.is_valid():
+			return self.form_valid((question_form, choice_forms))
+		else:
+			return self.form_invalid((question_form, choice_forms))
+
+	def form_invalid(self, forms):
+		question_form, choice_forms = forms
+		return render(self.request, self.template_name, context={"question_form": question_form, "choice_forms": choice_forms})
+
+	def form_valid(self, forms):
+		question_form, choice_forms = forms
+
+		if question_form.has_changed():
+			self.question.question = question_form.cleaned_data["question"]
+			self.question.save()
+
+		current_choices = [d["choice"] for d in choice_forms.cleaned_data]
+		current_choices_num = choice_forms.total_form_count()
+
+		if choice_forms.has_changed():
+			if self.num_choices == current_choices_num:
+				for i, choice_form in enumerate(choice_forms):
+					if choice_form.has_changed():
+						self.choices[i].choice = choice_form.cleaned_data["choice"]
+						self.choices[i].save()
+			else:
+				diff_num = current_choices_num - self.num_choices
+				
+				if diff_num < 0:
+					i = 0
+					while diff_num < 0:
+						del_choice = self.choices[i]
+						if not del_choice.choice in current_choices:
+							del_choice.delete()
+							diff_num += 1
+						i += 1
+					for i, choice_form in enumerate(choice_forms):
+						if not choice_form.cleaned_data["choice"] in self.initial_choices_values:
+							self.choices[i].choice = choice_form.cleaned_data["choice"]
+							self.choices[i].save()
+				else:
+					for i, choice_form in enumerate(choice_forms):
+						if choice_form.has_changed():
+							try:
+								self.choices[i].choice = choice_form.cleaned_data["choice"]
+								self.choices[i].save()
+							except IndexError:
+								new_choice = Choice(for_question_id=self.question.id, choice=choice_form.cleaned_data["choice"])
+								new_choice.save()
+			
+		return redirect("polls:index")
 
 class DeletePollView(RedirectView):
 	permanent = False
