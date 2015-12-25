@@ -54,7 +54,7 @@ input[type="text"], input[type="email"], input[type="password"] {
 	}
 }
 
-input[type="submit"], input[type="button"] {
+input[type="submit"], input[type="button"], .cancel {
 	width: 5rem;
 	padding: 0.5rem 0.5rem;
 	outline: none;
@@ -71,6 +71,16 @@ input[type="submit"] {
 	background-color: $highlight;
 	&:hover,&:focus {
 		background-color: darken($highlight, 10%);
+	}
+}
+
+.cancel {
+	border-radius: 4px;
+	transition: 0.5s;
+	background-color: $light;
+	&:hover,&:focus {
+		color: white;
+		background-color: darken($light, 10%);
 	}
 }
 
