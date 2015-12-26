@@ -14,6 +14,6 @@ urlpatterns = [
                url(r"^create$", views.CreatePollView.as_view(), name="create-poll"),
                url(r"^update/(?P<pk>[0-9]+)$", views.UpdatePollView.as_view(), name="update-poll"),
                url(r"^delete/(?P<pk>[0-9]+)$", views.DeletePollView.as_view(), name="delete-poll"),
-               url(r"^(?P<pk>[0-9]+)/$", views.VotePollView.as_view(), name="vote"),
-               url(r"^(?P<pk>[0-9]+)/results/$", views.ResultsPollView.as_view(), name="results"),
+               url(r"^vote/(?P<pk>[0-9]+)$", views.VotePollView.as_view(), name="vote"),
+               url(r"^results/(?P<pk>[0-9]+)$", views.ResultsPollView.as_view(), name="results"),
               ]

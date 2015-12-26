@@ -7,7 +7,7 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 from django.utils import timezone
 from django import forms
 
-from .models import PollUser, Choice, Question, SignupForm, LoginForm, UserAccountForm, QuestionForm, ChoiceFormset
+from .models import PollUser, Choice, Question, SignupForm, LoginForm, UserAccountForm, QuestionForm, ChoiceFormset, VoteForm
 
 from django.contrib.auth import authenticate, login, logout
 
@@ -240,8 +240,30 @@ class IndexView(ListView):
 		context.update(polluser=self.request.user)
 		return context
 
-class VotePollView(UpdateView):
-	pass
+class VotePollView(FormView):
+	template_name = "polls/vote.html"
+	form_class = VoteForm
+
+	def dispatch(self, request, *args, **kwargs):
+		self.question = Question.objects.get(pk=kwargs.pop("pk"))
+		self.choices = self.question.get_choices(for_form=True)
+
+		return super(VotePollView, self).dispatch(request, *args, **kwargs)
+
+	def get_form(self):
+		form = super(VotePollView, self).get_form()
+		form.fields["choice_set"].choices = self.choices
+		return form
+
+	def get_context_data(self, **kwargs):
+		kwargs.update(poll=self.question)
+		return super(VotePollView, self).get_context_data(**kwargs)
+
+	def form_valid(self, form):
+		selected_choice = self.question.choice_set.get(pk=form.cleaned_data.get('choice_set'))
+		selected_choice.votes += 1
+		selected_choice.save()
+		return redirect("polls:index")
 
 class ResultsPollView(DetailView):
 	pass

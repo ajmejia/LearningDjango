@@ -49,9 +49,18 @@ class Question(models.Model):
 
 	def __unicode__(self):
 		return force_unicode(self.question)
+
+	def _get_choices_query(self):
+		return self.choice_set.all()
 		
+	def get_choices(self, for_form=False):
+		if for_form:
+			return [(c.pk, c.choice) for c in self._get_choices_query()]
+		else:
+			return [c.choice for c in self._get_choices_query()]
+
 	def get_total_votes(self):
-		return sum([choice.votes for choice in self.choice_set.all()])
+		return sum([choice.votes for choice in self._get_choices_query()])
 
 class Choice(models.Model):
 	for_question = models.ForeignKey(Question, verbose_name="choice for question")
@@ -132,3 +141,6 @@ class ChoiceForm(forms.ModelForm):
 		fields = ("choice",)
 
 ChoiceFormset = forms.formset_factory(ChoiceForm, extra=0, min_num=2, validate_min=True)
+
+class VoteForm(forms.Form):
+	choice_set = forms.ChoiceField(choices=[], widget=forms.RadioSelect)

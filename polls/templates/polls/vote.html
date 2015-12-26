@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block add_styles %}
-	<link rel="stylesheet" type="text/css" href="{% static 'polls/form_style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/form_style.css' %}">
 {% endblock %}
 
 {% block flash_messages_block %}
@@ -13,7 +13,7 @@
 	{% endwith %}
 {% endblock %}
 
-{% block page_title %}Vote{% endblock %}
+{% block page_title %}{{ poll.question }}{% endblock %}
 
 {% block page_body %}
 	<div id="form-message-container">
@@ -23,10 +23,14 @@
 			{% endfor %}
 		{% endwith %}
 	</div>
-	<h2>{{ form.question_text }}</h2>
-	<form action="{% url 'polls:vote' form.question_pk %}" method="post">
+	<form action="{% url 'polls:vote' poll.pk %}" method="post">
 		{% csrf_token %}
-		{{ form.as_p }}
+		<div class="field-wrapper">
+			{{ form.choice_set }}
+			<div class="error-field">
+				{{ form.choice_set.errors }}
+			</div>
+		</div>
 		<input type="submit" value="Vote"/>
 	</form>
 {% endblock %}
