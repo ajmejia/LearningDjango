@@ -18,11 +18,15 @@ $highlight: #008066;
     font-weight: 300; }
   #page-body .field-wrapper, #page-body .dynamic-form {
     margin: 1.5rem 0 0 0; }
-    #page-body .field-wrapper .errorlist, #page-body .dynamic-form .errorlist {
+    #page-body .field-wrapper .errorlist, #page-body .field-wrapper #id_choice_set, #page-body .dynamic-form .errorlist, #page-body .dynamic-form #id_choice_set {
       margin-bottom: 0;
       padding: 0;
       display: inline;
       list-style: none; }
+      #page-body .field-wrapper .errorlist label, #page-body .field-wrapper #id_choice_set label, #page-body .dynamic-form .errorlist label, #page-body .dynamic-form #id_choice_set label {
+        font-weight: 400; }
+    #page-body .field-wrapper #id_choice_set li, #page-body .dynamic-form #id_choice_set li {
+      margin: 1rem auto; }
     #page-body .field-wrapper .error-field, #page-body .dynamic-form .error-field {
       height: 1rem;
       width: 100%;

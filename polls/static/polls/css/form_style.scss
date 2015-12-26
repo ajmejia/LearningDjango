@@ -19,11 +19,17 @@
 	}
 	.field-wrapper,.dynamic-form {
 		margin: 1.5rem 0 0 0;
-		.errorlist {
+		.errorlist,#id_choice_set {
 			margin-bottom: 0;
 			padding: 0;
 			display: inline;
 			list-style: none;
+			label {
+				font-weight: 400;
+			}
+		}
+		#id_choice_set li {
+			margin: 1rem auto;
 		}
 		.error-field {
 			height: 1rem;
