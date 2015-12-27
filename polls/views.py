@@ -266,4 +266,5 @@ class VotePollView(FormView):
 		return redirect("polls:index")
 
 class ResultsPollView(DetailView):
-	pass
+	template_name = "polls/results.html"
+	model = Question

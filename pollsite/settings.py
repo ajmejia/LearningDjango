@@ -25,7 +25,7 @@ SECRET_KEY = '5m3ufe=_orsml&icqretoy-mkat@yai16qbz7djwv*zty5t^5b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost",]
 
 
 # Application definition

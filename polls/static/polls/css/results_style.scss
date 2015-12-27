@@ -1,0 +1,52 @@
+@import "color_style";
+
+#page-body {
+	min-height: 500px;
+	width: 70%;
+	margin: 0 auto;
+	margin-bottom: 100px;
+	padding: 1rem 2rem;
+	text-align: center;
+	border-radius: 5px;
+	box-shadow: 0px 10px 5px $dark;
+	table {
+		width: 100%;
+		max-width: 100%;
+		min-height: 500px;
+		margin: 0 auto;
+		tr {
+			text-align: left;
+			td {
+				width: 100%;
+			}
+			td.choice-row {
+				width: 30%;
+			}
+			td.bin-row {
+				width: 70%;
+				.histogram {
+					width: 0%;
+					height: 20px;
+					background: $dark;
+				}
+			}
+		}
+	}
+}
+
+.go-back {
+	width: 2rem;
+	margin: 2rem 0 1rem 0;
+	padding: 0.5rem 1.5rem;
+	border-radius: 4px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 1rem;
+	color: white;
+	transition: 0.5s;
+	background-color: $highlight;
+	&:hover,&:focus {
+		background-color: darken($highlight, 10%);
+		color: white;
+	}
+}

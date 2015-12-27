@@ -1,17 +1,46 @@
 {% extends "base_template.html" %}
+{% load staticfiles %}
 
-{% block page_title %}Poll Results{% endblock %}
-{% block flash_messages %}
-	<p class="{{ messages.0.tags }}">{{ messages.0 }}</p>
+{% block add_styles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'polls/css/results_style.css' %}">
 {% endblock %}
-{% block page_content %}
-	<h2>{{ question.question_text }}</h2>
 
-	<div class="results-wrapper">
-		{% for choice in question.choice_set.all %}
-			<div class="votes-wrapper">{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</div>
+{% block flash_messages_block %}
+	{% with flash_messages=messages %}
+		{% for message in flash_messages %}
+			<div class="{{ message.tags }}">{{ message }}</div>
 		{% endfor %}
-	</div>
+	{% endwith %}
+{% endblock %}
+
+{% block page_title %}{{ question.question }}{% endblock %}
+
+{% block page_body %}
+
+	<table data-total="{{ question.get_total_votes }}">
+		{% for choice in question.choice_set.all %}
+			<tr>
+				<td class="choice-row">{{ choice.choice }}</td>
+				<td class="bin-row"><div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" class="histogram"></div></td>
+			</tr>
+		{% endfor %}
+	</table>
 	</br>
-	<a href="{% url 'polls:index' %}">Try another poll</a>
+	<a href="{% url 'polls:index' %}" class="go-back">Go back</a>
+{% endblock %}
+
+{% block js %}
+	<script>
+		$(function() {
+		  var $table = $("table");
+		  
+		  var $total_votes = $table.data("total");
+		  var $bin_ids = $(".histogram").map(function(i, bin){
+				return "#"+bin.id;
+			});
+		  $bin_ids.each(function(i, id){
+					$(id).css("width", ($(id).data("votes")/$total_votes*100)+"%");
+				});
+		});
+	</script>
 {% endblock %}
