@@ -18,10 +18,25 @@
 {% block page_body %}
 
 	<table data-total="{{ question.get_total_votes }}">
+		<tr>
+	    <th id="choices-head">Choices</th>
+	    <th id="votes-head">Votes (%)</th>
+		</tr>
+
+	  <tr>
+	    <td class="choice-col"></td>
+	    <td class="bin-empty">
+	      <div class="scale">
+	        <span class="start">0%</span>
+	        <span class="half">50%</span>
+	        <span class="full">100%</span>
+	      </div>
+	    </td>
+	  </tr>
 		{% for choice in question.choice_set.all %}
 			<tr>
-				<td class="choice-row">{{ choice.choice }}</td>
-				<td class="bin-row"><div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" class="histogram"></div></td>
+				<td class="choice-col">{{ choice.choice }}</td>
+				<td class="bin-col"><div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" class="histogram"></div></td>
 			</tr>
 		{% endfor %}
 	</table>
@@ -39,7 +54,7 @@
 				return "#"+bin.id;
 			});
 		  $bin_ids.each(function(i, id){
-					$(id).css("width", ($(id).data("votes")/$total_votes*100)+"%");
+					$(id).animate({"width":($(id).data("votes")/$total_votes*100)+"%"}, 1000);
 				});
 		});
 	</script>

@@ -2,7 +2,7 @@
 $highlight: #008066;
 */
 #page-body {
-  min-height: 500px;
+  min-height: 700px;
   width: 70%;
   margin: 0 auto;
   margin-bottom: 100px;
@@ -14,19 +14,44 @@ $highlight: #008066;
     width: 100%;
     max-width: 100%;
     min-height: 500px;
-    margin: 0 auto; }
+    margin: 0 0 2rem 0; }
     #page-body table tr {
       text-align: left; }
+      #page-body table tr #choices-head, #page-body table tr #votes-head {
+        padding: 0;
+        text-transform: uppercase;
+        font-weight: 400; }
+      #page-body table tr #votes-head {
+        text-align: center; }
       #page-body table tr td {
         width: 100%; }
-      #page-body table tr td.choice-row {
-        width: 30%; }
-      #page-body table tr td.bin-row {
-        width: 70%; }
-        #page-body table tr td.bin-row .histogram {
+      #page-body table tr .choice-col {
+        width: 20%; }
+      #page-body table tr .bin-col {
+        width: 80%;
+        background-color: #e9e9e9; }
+        #page-body table tr .bin-col .histogram {
           width: 0%;
           height: 20px;
           background: #808080; }
+      #page-body table tr .bin-empty {
+        width: 80%; }
+        #page-body table tr .bin-empty .scale {
+          position: relative;
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          border-bottom: 1.5px solid #000000; }
+          #page-body table tr .bin-empty .scale .start {
+            position: absolute;
+            left: 0; }
+          #page-body table tr .bin-empty .scale .half {
+            position: absolute;
+            left: 50%;
+            margin-left: 1rem; }
+          #page-body table tr .bin-empty .scale .full {
+            position: absolute;
+            right: 0%; }
 
 .go-back {
   width: 2rem;
