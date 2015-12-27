@@ -33,7 +33,7 @@
 			.bin-col {
 				width: 80%;
 				background-color: #e9e9e9;
-				.histogram {
+				.bin {
 					width: 0%;
 					height: 20px;
 					background: $dark;
@@ -54,7 +54,7 @@
 	        .half {
 	          position: absolute;
 	          left: 50%;
-	          margin-left: 1rem;
+	          margin-left: -0.5rem;
 	        }
 	        .full {
 	          position: absolute;

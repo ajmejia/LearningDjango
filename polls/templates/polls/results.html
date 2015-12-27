@@ -36,7 +36,7 @@
 		{% for choice in question.choice_set.all %}
 			<tr>
 				<td class="choice-col">{{ choice.choice }}</td>
-				<td class="bin-col"><div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" class="histogram"></div></td>
+				<td class="bin-col"><div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" class="bin"></div></td>
 			</tr>
 		{% endfor %}
 	</table>
@@ -50,11 +50,11 @@
 		  var $table = $("table");
 		  
 		  var $total_votes = $table.data("total");
-		  var $bin_ids = $(".histogram").map(function(i, bin){
+		  var $bin_ids = $(".bin").map(function(i, bin){
 				return "#"+bin.id;
 			});
 		  $bin_ids.each(function(i, id){
-					$(id).animate({"width":($(id).data("votes")/$total_votes*100)+"%"}, 1000);
+					$(id).animate({"width":($(id).data("votes")/$total_votes*100)+"%"}, 2000);
 				});
 		});
 	</script>
