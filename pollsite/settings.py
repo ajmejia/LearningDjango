@@ -62,6 +62,9 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'pollsite.urls'
+LOGIN_URL = "polls:login"
+LOGOUT_URL = "polls:logout"
+LOGIN_REDIRECT_URL = "polls:index"
 
 TEMPLATES = [
     {

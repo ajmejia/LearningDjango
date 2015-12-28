@@ -7,34 +7,48 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 from django.utils import timezone
 from django import forms
 
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+
 from .models import User, Choice, Poll, PollForm, ChoiceFormset, VoteForm
 
 from django.contrib.auth import authenticate, login, logout
 
+class SignupView(CreateView):
+	template_name = "polls/signup.html"
+	model = User
+	form_class = UserCreationForm
+
+	def form_valid(self, form):
+		self.object = form.save()
+		username = form.cleaned_data.get("username")
+		password = form.cleaned_data.get("password1")
+
+		user = authenticate(username=username, password=password)
+		if user != None:
+			if user.is_active:
+				login(self.request, user)
+				messages.add_message(self.request, messages.SUCCESS, "Welcome aboard, %s!"%username)
+			else:
+				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account started disabled.")
+		else:
+			messages.add_message(self.request, messages.ERROR, "Oh no! Something went wrong. Contact your favorite developer to fix this.")
+			return redirect("polls:signup", permanent=False)
+
+		return redirect("polls:index")
+		
+class UserAccountView(UpdateView):
+	template_name = "polls/user_account.html"
+	model = User
+	form_class = UserChangeForm
+
+	def form_valid(self, form):
+		self.object = form.save()
+
+		messages.add_message(self.request, messages.SUCCESS, "Your account was updated.")
+		return redirect("polls:index")
+
 # =========================================================================================================================
 # REPLACE THIS BLOCK WITH THE VIEWS IN django.contrib.auth.views ==========================================================
-#class SignupView(CreateView):
-#	template_name = "polls/signup.html"
-#	model = PollUser
-#	form_class = SignupForm
-
-#	def form_valid(self, form):
-#		self.object = form.save()
-#		username = form.cleaned_data["username"]
-#		password = form.cleaned_data["password"]
-
-#		polluser = authenticate(username=username, password=password)
-#		if polluser != None:
-#			if polluser.is_active:
-#				login(self.request, polluser)
-#				messages.add_message(self.request, messages.SUCCESS, "Welcome aboard, %s!"%username)
-#			else:
-#				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account started disabled.")
-#		else:
-#			messages.add_message(self.request, messages.ERROR, "Oh no! Something went wrong. Contact your favorite developer to fix this.")
-#			return redirect("polls:signup", permanent=False)
-
-#		return redirect("polls:index")
 
 #class LoginView(FormView):
 #	template_name = "polls/login.html"
@@ -75,17 +89,6 @@ from django.contrib.auth import authenticate, login, logout
 #		else:
 #			messages.add_message(request, messages.SUCCESS, "Sorry, we could not log you out. Contact your favorite developer to fix this.")
 #		return super(LogoutView, self).dispatch(request, *args, **kwargs)
-
-#class UserAccountView(UpdateView):
-#	template_name = "polls/user_account.html"
-#	model = PollUser
-#	form_class = UserAccountForm
-
-#	def form_valid(self, form):
-#		self.object = form.save()
-
-#		messages.add_message(self.request, messages.SUCCESS, "Your account was updated.")
-#		return redirect("polls:index")
 # =========================================================================================================================
 
 class CreatePollView(FormView):

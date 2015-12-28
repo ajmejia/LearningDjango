@@ -33,24 +33,17 @@
 			</div>
 		</div>
 		<div class="field-wrapper">
-			<label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-			{{ form.email }}
+			<label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+			{{ form.password1 }}
 			<div class="error-field">
-				{{ form.email.errors }}
+				{{ form.password1.errors }}
 			</div>
 		</div>
 		<div class="field-wrapper">
-			<label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-			{{ form.password }}
+			<label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+			{{ form.password2 }}
 			<div class="error-field">
-				{{ form.password.errors }}
-			</div>
-		</div>
-		<div class="field-wrapper">
-			<label for="{{ form.confirm_password.id_for_label }}">{{ form.confirm_password.label }}</label>
-			{{ form.confirm_password }}
-			<div class="error-field">
-				{{ form.confirm_password.errors }}
+				{{ form.password2.errors }}
 			</div>
 		</div>
 		<input type="submit" value="Sign up"/>
