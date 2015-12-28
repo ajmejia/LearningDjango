@@ -31,21 +31,11 @@ CHOICE_MAX_LENGTH = 200
 CHOICE_MIN_FIELDS = 2
 CHOICE_MAX_FIELDS = 7
 
-class PollUser(User):
-#	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
-#	email = forms.EmailField(max_length=EMAIL_MAX_LENGTH)
-#	password = forms.CharField(min_length=PASSWORD_MIN_LENGTH)
-
-	def __unicode__(self):
-		return force_unicode(self.username)
-
-	def get_absolute_url(self):
-		return reverse("polls:index")
-
-class Question(models.Model):
+class Poll(models.Model):
 	question = models.CharField(max_length=QUESTION_MAX_LENGTH)
-	created_on = models.DateTimeField("date published")
-	created_by = models.ForeignKey(PollUser)
+	opened_by = models.ForeignKey(User)
+	opened_on = models.DateTimeField(auto_now_add=True, auto_now=False)
+	updated_on = models.DateTimeField(auto_now_add=False, auto_now=True)
 
 	def __unicode__(self):
 		return force_unicode(self.question)
@@ -63,84 +53,88 @@ class Question(models.Model):
 		return sum([choice.votes for choice in self._get_choices_query()])
 
 class Choice(models.Model):
-	for_question = models.ForeignKey(Question, verbose_name="choice for question")
-	choice = models.CharField(max_length=CHOICE_MAX_LENGTH)
+	option = models.CharField(max_length=CHOICE_MAX_LENGTH)
+	for_poll = models.ForeignKey(Poll)
 	votes = models.IntegerField(default=0)
+	voted_by = models.ManyToManyField(User)
 
 	def __unicode__(self):
 		return force_unicode(self.choice)
 
-class SignupForm(forms.ModelForm):
-	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=True, widget=forms.PasswordInput)
+# =========================================================================================================================
+# THIS BLOCK WILL BE REPLACED BY THE FORMS IN django.contrib.auth.forms ===================================================
+#class SignupForm(forms.ModelForm):
+#	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=True, widget=forms.PasswordInput)
 
-	class Meta:
-		model = PollUser
-		fields = ("username", "email", "password", "confirm_password",)
-		widgets = {"password": forms.PasswordInput}
+#	class Meta:
+#		model = PollUser
+#		fields = ("username", "email", "password", "confirm_password",)
+#		widgets = {"password": forms.PasswordInput}
 
-	def clean(self):
-		super(SignupForm, self).clean()
-		data = self.cleaned_data.get("confirm_password")
-		password = self.cleaned_data.get("password")
-		if data and password and data != password:
-				raise forms.ValidationError("Passwords do not match.")
+#	def clean(self):
+#		super(SignupForm, self).clean()
+#		data = self.cleaned_data.get("confirm_password")
+#		password = self.cleaned_data.get("password")
+#		if data and password and data != password:
+#				raise forms.ValidationError("Passwords do not match.")
 
-	def save(self, commit=True):
-		user = super(SignupForm, self).save(commit=False)
-		user.set_password(self.cleaned_data["password"])
-		if commit:
-			user.save()
-		return user
+#	def save(self, commit=True):
+#		user = super(SignupForm, self).save(commit=False)
+#		user.set_password(self.cleaned_data["password"])
+#		if commit:
+#			user.save()
+#		return user
 
-class LoginForm(forms.Form):
-	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
-	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, widget=forms.PasswordInput)
+#class LoginForm(forms.Form):
+#	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
+#	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, widget=forms.PasswordInput)
 	
-	def clean_username(self):
-		data = self.cleaned_data.get("username")
-		if data:
-			try:
-				user = PollUser.objects.get(username=data)
-			except PollUser.DoesNotExist:
-				raise forms.ValidationError("%s does not exist."%data)
-			return data			
+#	def clean_username(self):
+#		data = self.cleaned_data.get("username")
+#		if data:
+#			try:
+#				user = PollUser.objects.get(username=data)
+#			except PollUser.DoesNotExist:
+#				raise forms.ValidationError("%s does not exist."%data)
+#			return data			
 
-class UserAccountForm(forms.ModelForm):
-	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
-	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
+#class UserAccountForm(forms.ModelForm):
+#	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
+#	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
 
-	class Meta:
-		model = PollUser
-		fields = ("first_name", "last_name", "username", "email", "password", "confirm_password",)
+#	class Meta:
+#		model = PollUser
+#		fields = ("first_name", "last_name", "username", "email", "password", "confirm_password",)
 
-	def clean(self):
-		super(UserAccountForm, self).clean()
-		data = self.cleaned_data.get("confirm_password")
-		password = self.cleaned_data.get("password")
-		if data and password and data != password:
-				raise forms.ValidationError("Passwords do not match.")
+#	def clean(self):
+#		super(UserAccountForm, self).clean()
+#		data = self.cleaned_data.get("confirm_password")
+#		password = self.cleaned_data.get("password")
+#		if data and password and data != password:
+#				raise forms.ValidationError("Passwords do not match.")
 		
-	def save(self, commit=True):
-		user = super(UserAccountForm, self).save(commit=False)
-		password = self.cleaned_data.get("password")
-		if password: user.set_password(password)
-		if commit:
-			user.save()
-		return user
+#	def save(self, commit=True):
+#		user = super(UserAccountForm, self).save(commit=False)
+#		password = self.cleaned_data.get("password")
+#		if password: user.set_password(password)
+#		if commit:
+#			user.save()
+#		return user
+# =========================================================================================================================
 
-class QuestionForm(forms.ModelForm):
+class PollForm(forms.ModelForm):
 
 	class Meta:
-		model = Question
+		model = Poll
 		fields = ("question",)
 
 class ChoiceForm(forms.ModelForm):
 
 	class Meta:
 		model = Choice
-		fields = ("choice",)
+		fields = ("option",)
 
 ChoiceFormset = forms.formset_factory(ChoiceForm, extra=0, min_num=2, validate_min=True)
 
 class VoteForm(forms.Form):
-	choice_set = forms.ChoiceField(choices=[], widget=forms.RadioSelect)
+	option_set = forms.ChoiceField(choices=[], widget=forms.RadioSelect)

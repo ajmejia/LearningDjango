@@ -25,7 +25,7 @@ SECRET_KEY = '5m3ufe=_orsml&icqretoy-mkat@yai16qbz7djwv*zty5t^5b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost",]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -39,7 +39,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',      #- A session framework                   (?)
     'django.contrib.messages',      #- Allows using flash-massaging across views (recommended with redirect requests)
     'django.contrib.staticfiles',   #- A framework for managing static files (?)
-    'crispy_forms',
     'polls'                         #- This is the application I created to handle the polls.
 )
 #- Some of this applications run on database(s) that need to be

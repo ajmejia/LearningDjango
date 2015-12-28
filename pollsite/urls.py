@@ -14,7 +14,7 @@ from django.contrib import admin
 #-----------------------------------------------------------
 
 urlpatterns = [
-    url(r'^polls/', include('polls.urls', namespace='polls')),         #- The ^polls/ patterns are handled by polls.urls.
+    url(r'^/', include('polls.urls', namespace='polls')),              #- The ^/ patterns are handled by polls.urls.
                                                                        #- The namespace is used to differenciate between
                                                                        #- views with the same name but different app.
     url(r'^admin/', include(admin.site.urls)),

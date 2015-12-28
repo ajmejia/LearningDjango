@@ -7,92 +7,95 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 from django.utils import timezone
 from django import forms
 
-from .models import PollUser, Choice, Question, SignupForm, LoginForm, UserAccountForm, QuestionForm, ChoiceFormset, VoteForm
+from .models import User, Choice, Poll, PollForm, ChoiceFormset, VoteForm
 
 from django.contrib.auth import authenticate, login, logout
 
-class SignupView(CreateView):
-	template_name = "polls/signup.html"
-	model = PollUser
-	form_class = SignupForm
+# =========================================================================================================================
+# REPLACE THIS BLOCK WITH THE VIEWS IN django.contrib.auth.views ==========================================================
+#class SignupView(CreateView):
+#	template_name = "polls/signup.html"
+#	model = PollUser
+#	form_class = SignupForm
 
-	def form_valid(self, form):
-		self.object = form.save()
-		username = form.cleaned_data["username"]
-		password = form.cleaned_data["password"]
+#	def form_valid(self, form):
+#		self.object = form.save()
+#		username = form.cleaned_data["username"]
+#		password = form.cleaned_data["password"]
 
-		polluser = authenticate(username=username, password=password)
-		if polluser != None:
-			if polluser.is_active:
-				login(self.request, polluser)
-				messages.add_message(self.request, messages.SUCCESS, "Welcome aboard, %s!"%username)
-			else:
-				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account started disabled.")
-		else:
-			messages.add_message(self.request, messages.ERROR, "Oh no! Something went wrong. Contact your favorite developer to fix this.")
-			return redirect("polls:signup", permanent=False)
+#		polluser = authenticate(username=username, password=password)
+#		if polluser != None:
+#			if polluser.is_active:
+#				login(self.request, polluser)
+#				messages.add_message(self.request, messages.SUCCESS, "Welcome aboard, %s!"%username)
+#			else:
+#				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account started disabled.")
+#		else:
+#			messages.add_message(self.request, messages.ERROR, "Oh no! Something went wrong. Contact your favorite developer to fix this.")
+#			return redirect("polls:signup", permanent=False)
 
-		return redirect("polls:index")
+#		return redirect("polls:index")
 
-class LoginView(FormView):
-	template_name = "polls/login.html"
-	form_class = LoginForm
+#class LoginView(FormView):
+#	template_name = "polls/login.html"
+#	form_class = LoginForm
 	
-	def form_valid(self, form):
-		username = form.cleaned_data["username"]
-		password = form.cleaned_data["password"]
+#	def form_valid(self, form):
+#		username = form.cleaned_data["username"]
+#		password = form.cleaned_data["password"]
 		
-		polluser = authenticate(username=username, password=password)
-		if polluser != None:
-			if polluser.is_active:
-				login(self.request, polluser)
-				messages.add_message(self.request, messages.SUCCESS, "Welcome back, %s!"%username)
-			else:
-				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account has been disabled.")
-		else:
-			messages.add_message(self.request, messages.ERROR, "Invalid username/password, try again.")
-			return redirect("polls:login", permanent=False)
+#		polluser = authenticate(username=username, password=password)
+#		if polluser != None:
+#			if polluser.is_active:
+#				login(self.request, polluser)
+#				messages.add_message(self.request, messages.SUCCESS, "Welcome back, %s!"%username)
+#			else:
+#				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account has been disabled.")
+#		else:
+#			messages.add_message(self.request, messages.ERROR, "Invalid username/password, try again.")
+#			return redirect("polls:login", permanent=False)
 
-		return redirect("polls:index")
+#		return redirect("polls:index")
 
-class LogoutView(RedirectView):
-	"""
-	RedirectView: Method flowchart:
-		1.dispatch()
-		2.http_method_not_allowed()
-		3.get_redirect_url()
-	"""
-	permanent = False
-	pattern_name = "polls:index"
+#class LogoutView(RedirectView):
+#	"""
+#	RedirectView: Method flowchart:
+#		1.dispatch()
+#		2.http_method_not_allowed()
+#		3.get_redirect_url()
+#	"""
+#	permanent = False
+#	pattern_name = "polls:index"
 	
-	def dispatch(self, request, *args, **kwargs):
-		username = request.user.username
-		logout(request)
-		if not isinstance(request.user, PollUser):
-			messages.add_message(request, messages.SUCCESS, "See you soon, %s!"%username)
-		else:
-			messages.add_message(request, messages.SUCCESS, "Sorry, we could not log you out. Contact your favorite developer to fix this.")
-		return super(LogoutView, self).dispatch(request, *args, **kwargs)
+#	def dispatch(self, request, *args, **kwargs):
+#		username = request.user.username
+#		logout(request)
+#		if not isinstance(request.user, PollUser):
+#			messages.add_message(request, messages.SUCCESS, "See you soon, %s!"%username)
+#		else:
+#			messages.add_message(request, messages.SUCCESS, "Sorry, we could not log you out. Contact your favorite developer to fix this.")
+#		return super(LogoutView, self).dispatch(request, *args, **kwargs)
 
-class UserAccountView(UpdateView):
-	template_name = "polls/user_account.html"
-	model = PollUser
-	form_class = UserAccountForm
+#class UserAccountView(UpdateView):
+#	template_name = "polls/user_account.html"
+#	model = PollUser
+#	form_class = UserAccountForm
 
-	def form_valid(self, form):
-		self.object = form.save()
+#	def form_valid(self, form):
+#		self.object = form.save()
 
-		messages.add_message(self.request, messages.SUCCESS, "Your account was updated.")
-		return redirect("polls:index")
+#		messages.add_message(self.request, messages.SUCCESS, "Your account was updated.")
+#		return redirect("polls:index")
+# =========================================================================================================================
 
 class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"
 
 	def get(self, request):
-		return render(request, self.template_name, context={"question_form": QuestionForm(), "choice_forms": ChoiceFormset()})
+		return render(request, self.template_name, context={"question_form": PollForm(), "choice_forms": ChoiceFormset()})
 
 	def post(self, request):
-		question_form = QuestionForm(request.POST)
+		question_form = PollForm(request.POST)
 		choice_forms = ChoiceFormset(request.POST)
 
 		if question_form.is_valid() and choice_forms.is_valid():
@@ -101,7 +104,7 @@ class CreatePollView(FormView):
 			return self.form_invalid((question_form, choice_forms))
 
 	def get_form(self):
-		return QuestionForm(), ChoiceFormset()
+		return PollForm(), ChoiceFormset()
 
 	def form_invalid(self, forms):
 		question_form, choice_forms = forms
@@ -110,8 +113,8 @@ class CreatePollView(FormView):
 	def form_valid(self, forms):
 		question_form, choice_forms = forms
 
-		current_user = PollUser.objects.get(id=self.request.user.id)
-		question = Question(question=question_form.cleaned_data["question"],
+		current_user = User.objects.get(id=self.request.user.id)
+		question = Poll(question=question_form.cleaned_data["question"],
 		                    created_on=timezone.now(),
 		                    created_by=current_user,
 		                   )
@@ -127,7 +130,7 @@ class UpdatePollView(FormView):
 	template_name = "polls/update_poll.html"
 
 	def dispatch(self, request, *args, **kwargs):
-		self.question = Question.objects.get(pk=kwargs.pop("pk"))
+		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
 		
 		self.initial_question = {"question": self.question.question}
 		self.choices = self.question.choice_set.all()
@@ -147,7 +150,7 @@ class UpdatePollView(FormView):
 		return super(UpdatePollView, self).dispatch(request, *args, **kwargs)
 
 	def get(self, request):
-		question_form = QuestionForm(initial=self.initial_question)
+		question_form = PollForm(initial=self.initial_question)
 		choice_forms = ChoiceFormset(initial=self.initial_choices)
 		
 		return render(request, self.template_name, context={"question_form": question_form,
@@ -155,7 +158,7 @@ class UpdatePollView(FormView):
 		                                                    "poll": self.question})
 
 	def post(self, request):
-		question_form = QuestionForm(data=request.POST, initial=self.initial_question)
+		question_form = PollForm(data=request.POST, initial=self.initial_question)
 		choice_forms = ChoiceFormset(data=request.POST, initial=self.initial_formset)
 		
 		if question_form.is_valid() and choice_forms.is_valid():
@@ -215,7 +218,7 @@ class DeletePollView(RedirectView):
 	pattern_name = "polls:index"
 	
 	def dispatch(self, request, *args, **kwargs):
-		question = Question.objects.get(pk=kwargs.pop("pk"))
+		question = Poll.objects.get(pk=kwargs.pop("pk"))
 		question.delete()
 		return super(DeletePollView, self).dispatch(request, *args, **kwargs)
 
@@ -231,7 +234,7 @@ class IndexView(ListView):
 		7.get()
 		8.render_to_response()
 	"""
-	model = Question
+	model = Poll
 	template_name = "polls/index.html"
 	context_object_name = "poll_list"
 	
@@ -245,7 +248,7 @@ class VotePollView(FormView):
 	form_class = VoteForm
 
 	def dispatch(self, request, *args, **kwargs):
-		self.question = Question.objects.get(pk=kwargs.pop("pk"))
+		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
 		self.choices = self.question.get_choices(for_form=True)
 
 		return super(VotePollView, self).dispatch(request, *args, **kwargs)
@@ -267,4 +270,4 @@ class VotePollView(FormView):
 
 class ResultsPollView(DetailView):
 	template_name = "polls/results.html"
-	model = Question
+	model = Poll
