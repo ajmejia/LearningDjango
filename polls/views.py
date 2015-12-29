@@ -8,6 +8,7 @@ from django.utils import timezone
 from django import forms
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.models import Permission
 
 from .models import User, Choice, Poll, PollForm, ChoiceFormset, VoteForm
 
@@ -20,6 +21,10 @@ class SignupView(CreateView):
 
 	def form_valid(self, form):
 		self.object = form.save()
+		
+		polls_permissions = Permission.objects.filter(content_type__app_label="polls")
+		for polls_perm in polls_permissions: self.object.user_permissions.add(polls_perm)
+
 		username = form.cleaned_data.get("username")
 		password = form.cleaned_data.get("password1")
 
@@ -46,50 +51,6 @@ class UserAccountView(UpdateView):
 
 		messages.add_message(self.request, messages.SUCCESS, "Your account was updated.")
 		return redirect("polls:index")
-
-# =========================================================================================================================
-# REPLACE THIS BLOCK WITH THE VIEWS IN django.contrib.auth.views ==========================================================
-
-#class LoginView(FormView):
-#	template_name = "polls/login.html"
-#	form_class = LoginForm
-	
-#	def form_valid(self, form):
-#		username = form.cleaned_data["username"]
-#		password = form.cleaned_data["password"]
-		
-#		polluser = authenticate(username=username, password=password)
-#		if polluser != None:
-#			if polluser.is_active:
-#				login(self.request, polluser)
-#				messages.add_message(self.request, messages.SUCCESS, "Welcome back, %s!"%username)
-#			else:
-#				messages.add_message(self.request, messages.ERROR, "Oops, it appears that your account has been disabled.")
-#		else:
-#			messages.add_message(self.request, messages.ERROR, "Invalid username/password, try again.")
-#			return redirect("polls:login", permanent=False)
-
-#		return redirect("polls:index")
-
-#class LogoutView(RedirectView):
-#	"""
-#	RedirectView: Method flowchart:
-#		1.dispatch()
-#		2.http_method_not_allowed()
-#		3.get_redirect_url()
-#	"""
-#	permanent = False
-#	pattern_name = "polls:index"
-	
-#	def dispatch(self, request, *args, **kwargs):
-#		username = request.user.username
-#		logout(request)
-#		if not isinstance(request.user, PollUser):
-#			messages.add_message(request, messages.SUCCESS, "See you soon, %s!"%username)
-#		else:
-#			messages.add_message(request, messages.SUCCESS, "Sorry, we could not log you out. Contact your favorite developer to fix this.")
-#		return super(LogoutView, self).dispatch(request, *args, **kwargs)
-# =========================================================================================================================
 
 class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"

@@ -61,67 +61,6 @@ class Choice(models.Model):
 	def __unicode__(self):
 		return force_unicode(self.option)
 
-# =========================================================================================================================
-# THIS BLOCK WILL BE REPLACED BY THE FORMS IN django.contrib.auth.forms ===================================================
-#class SignupForm(forms.ModelForm):
-#	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=True, widget=forms.PasswordInput)
-
-#	class Meta:
-#		model = PollUser
-#		fields = ("username", "email", "password", "confirm_password",)
-#		widgets = {"password": forms.PasswordInput}
-
-#	def clean(self):
-#		super(SignupForm, self).clean()
-#		data = self.cleaned_data.get("confirm_password")
-#		password = self.cleaned_data.get("password")
-#		if data and password and data != password:
-#				raise forms.ValidationError("Passwords do not match.")
-
-#	def save(self, commit=True):
-#		user = super(SignupForm, self).save(commit=False)
-#		user.set_password(self.cleaned_data["password"])
-#		if commit:
-#			user.save()
-#		return user
-
-#class LoginForm(forms.Form):
-#	username = forms.CharField(max_length=USERNAME_MAX_LENGTH)
-#	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, widget=forms.PasswordInput)
-	
-#	def clean_username(self):
-#		data = self.cleaned_data.get("username")
-#		if data:
-#			try:
-#				user = PollUser.objects.get(username=data)
-#			except PollUser.DoesNotExist:
-#				raise forms.ValidationError("%s does not exist."%data)
-#			return data			
-
-#class UserAccountForm(forms.ModelForm):
-#	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
-#	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
-
-#	class Meta:
-#		model = PollUser
-#		fields = ("first_name", "last_name", "username", "email", "password", "confirm_password",)
-
-#	def clean(self):
-#		super(UserAccountForm, self).clean()
-#		data = self.cleaned_data.get("confirm_password")
-#		password = self.cleaned_data.get("password")
-#		if data and password and data != password:
-#				raise forms.ValidationError("Passwords do not match.")
-		
-#	def save(self, commit=True):
-#		user = super(UserAccountForm, self).save(commit=False)
-#		password = self.cleaned_data.get("password")
-#		if password: user.set_password(password)
-#		if commit:
-#			user.save()
-#		return user
-# =========================================================================================================================
-
 class PollForm(forms.ModelForm):
 
 	class Meta:
