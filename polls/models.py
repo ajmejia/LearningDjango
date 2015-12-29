@@ -37,6 +37,10 @@ class Poll(models.Model):
 	opened_on = models.DateTimeField(auto_now_add=True, auto_now=False)
 	updated_on = models.DateTimeField(auto_now_add=False, auto_now=True)
 
+	class Meta:
+		permissions = (("vote", "Can vote on polls"),
+		               ("view_results", "Can watch results"))
+
 	def __unicode__(self):
 		return force_unicode(self.question)
 
