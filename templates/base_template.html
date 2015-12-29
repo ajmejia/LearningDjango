@@ -14,12 +14,12 @@
   <body>
 		<header id="navigation" class="clearfix">
 			<a href="{% url 'polls:index' %}" id="logo">polls</a>
-			{% with polluser=request.user %}
+			{% with user=request.user %}
 				<nav>
-					{% if polluser.is_authenticated %}
-						<a href="{% url 'polls:accounts' polluser.pk %}" id="username">{{ polluser.username }}</a>
+					{% if user.is_authenticated %}
+						<a href="{% url 'polls:accounts' user.pk %}" id="username">{{ user.username }}</a>
 						<a href="{% url 'polls:create-poll' %}">Create</a>
-						<a href="#{# url 'polls:mines' polluser.pk #}">Mines</a>
+						<a href="#{# url 'polls:mines' user.pk #}">Mines</a>
 						<a href="{% url 'polls:logout' %}">Sign out</a>
 					{% else %}
 						<a href="{% url 'polls:signup' %}">Sign up</a>

@@ -26,9 +26,9 @@
 	<form action="{% url 'polls:vote' poll.pk %}" method="post">
 		{% csrf_token %}
 		<div class="field-wrapper">
-			{{ form.choice_set }}
+			{{ form.option_set }}
 			<div class="error-field">
-				{{ form.choice_set.errors }}
+				{{ form.option_set.errors }}
 			</div>
 		</div>
 		<input type="submit" value="Vote"/>

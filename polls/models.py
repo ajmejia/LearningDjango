@@ -45,9 +45,9 @@ class Poll(models.Model):
 		
 	def get_choices(self, for_form=False):
 		if for_form:
-			return [(c.pk, c.choice) for c in self._get_choices_query()]
+			return [(c.pk, c.option) for c in self._get_choices_query()]
 		else:
-			return [c.choice for c in self._get_choices_query()]
+			return [c.option for c in self._get_choices_query()]
 
 	def get_total_votes(self):
 		return sum([choice.votes for choice in self._get_choices_query()])
@@ -59,7 +59,7 @@ class Choice(models.Model):
 	voted_by = models.ManyToManyField(User)
 
 	def __unicode__(self):
-		return force_unicode(self.choice)
+		return force_unicode(self.option)
 
 # =========================================================================================================================
 # THIS BLOCK WILL BE REPLACED BY THE FORMS IN django.contrib.auth.forms ===================================================

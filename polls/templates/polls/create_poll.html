@@ -38,9 +38,9 @@
 			{% for choice_form in choice_forms.forms %}
 				<div class="dynamic-form">
 						<input type="button" class="delete-form-row" value="delete">
-						{{ choice_form.choice }}
+						{{ choice_form.option }}
 						<div class="error-field">
-							{{ choice_form.choice.errors }}
+							{{ choice_form.option.errors }}
 						</div>
 				</div>
 			{% endfor %}

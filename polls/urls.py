@@ -3,6 +3,7 @@
 #---------------------------------------------------------------
 from django.conf.urls import url
 from django.contrib.auth.views import login, logout
+from django.contrib.auth.decorators import login_required
 
 from . import views
 

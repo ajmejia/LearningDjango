@@ -117,14 +117,11 @@ class CreatePollView(FormView):
 		question_form, choice_forms = forms
 
 		current_user = User.objects.get(id=self.request.user.id)
-		question = Poll(question=question_form.cleaned_data["question"],
-		                    created_on=timezone.now(),
-		                    created_by=current_user,
-		                   )
+		question = Poll(question=question_form.cleaned_data["question"], opened_by=current_user)
 		question.save()
 		choices = []
 		for choice_form in choice_forms:
-			choice = Choice(for_question_id=question.id, choice=choice_form.cleaned_data["choice"])
+			choice = Choice(for_poll_id=question.id, option=choice_form.cleaned_data["option"])
 			choice.save()
 			
 		return redirect("polls:index")
@@ -258,7 +255,7 @@ class VotePollView(FormView):
 
 	def get_form(self):
 		form = super(VotePollView, self).get_form()
-		form.fields["choice_set"].choices = self.choices
+		form.fields["option_set"].choices = self.choices
 		return form
 
 	def get_context_data(self, **kwargs):
@@ -266,7 +263,7 @@ class VotePollView(FormView):
 		return super(VotePollView, self).get_context_data(**kwargs)
 
 	def form_valid(self, form):
-		selected_choice = self.question.choice_set.get(pk=form.cleaned_data.get('choice_set'))
+		selected_choice = self.question.choice_set.get(pk=form.cleaned_data.get("option_set"))
 		selected_choice.votes += 1
 		selected_choice.save()
 		return redirect("polls:index")

@@ -13,11 +13,11 @@
 	{% endwith %}
 {% endblock %}
 
-{% block page_title %}{{ question.question }}{% endblock %}
+{% block page_title %}{{ poll.question }}{% endblock %}
 
 {% block page_body %}
 
-	<table data-total="{{ question.get_total_votes }}">
+	<table data-total="{{ poll.get_total_votes }}">
 		<tr>
 	    <th id="choices-head">Choices</th>
 	    <th id="votes-head">Votes (%)</th>
@@ -33,9 +33,9 @@
 	      </div>
 	    </td>
 	  </tr>
-		{% for choice in question.choice_set.all %}
+		{% for choice in poll.choice_set.all %}
 			<tr>
-				<td class="choice-col">{{ choice.choice }}</td>
+				<td class="choice-col">{{ choice.option }}</td>
 				<td class="bin-col"><div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" class="bin"></div></td>
 			</tr>
 		{% endfor %}
