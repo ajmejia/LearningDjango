@@ -1,18 +1,18 @@
-from django.shortcuts import render, render_to_response, redirect, get_object_or_404
-from django.contrib import messages
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.shortcuts import render, redirect, get_object_or_404
+
+from django.utils import timezone
+from django.utils.decorators import method_decorator
 
 from django.views.generic import RedirectView, ListView, DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteView
-from django.utils import timezone
-from django import forms
 
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from .models import User, Choice, Poll, PollForm, ChoiceFormset, VoteForm
-
-from django.contrib.auth import authenticate, login, logout
 
 class SignupView(CreateView):
 	template_name = "polls/signup.html"
@@ -46,6 +46,10 @@ class UserAccountView(UpdateView):
 	model = User
 	form_class = UserChangeForm
 
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super(UserAccountView, self).dispatch(request, *args, **kwargs)
+
 	def form_valid(self, form):
 		self.object = form.save()
 
@@ -54,6 +58,10 @@ class UserAccountView(UpdateView):
 
 class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"
+
+	@method_decorator(login_required)
+	def distpatch(self, request, *args, **kwargs):
+		return super(CreatePollView, self).dispatch(request, *args, **kwargs)
 
 	def get(self, request):
 		return render(request, self.template_name, context={"question_form": PollForm(), "choice_forms": ChoiceFormset()})
@@ -90,6 +98,7 @@ class CreatePollView(FormView):
 class UpdatePollView(FormView):
 	template_name = "polls/update_poll.html"
 
+	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
 		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
 		
@@ -177,7 +186,8 @@ class UpdatePollView(FormView):
 class DeletePollView(RedirectView):
 	permanent = False
 	pattern_name = "polls:index"
-	
+
+	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
 		question = Poll.objects.get(pk=kwargs.pop("pk"))
 		question.delete()
@@ -208,6 +218,7 @@ class VotePollView(FormView):
 	template_name = "polls/vote.html"
 	form_class = VoteForm
 
+	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
 		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
 		self.choices = self.question.get_choices(for_form=True)
@@ -232,3 +243,7 @@ class VotePollView(FormView):
 class ResultsPollView(DetailView):
 	template_name = "polls/results.html"
 	model = Poll
+
+	@method_decorator(login_required)
+	def dispatch(self, request, *args, **kwargs):
+		return super(ResultsPollView, self).dispatch(*args, **kwargs)
