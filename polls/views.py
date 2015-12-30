@@ -40,7 +40,7 @@ class SignupView(CreateView):
 			messages.add_message(self.request, messages.ERROR, "Oh no! Something went wrong. Contact your favorite developer to fix this.")
 			return redirect("polls:signup", permanent=False)
 
-		return redirect("polls:index")
+		return redirect("polls:index", permanent=False)
 		
 class UserAccountView(UpdateView):
 	template_name = "polls/user_account.html"
@@ -56,7 +56,7 @@ class UserAccountView(UpdateView):
 		self.object = form.save()
 
 		messages.add_message(self.request, messages.SUCCESS, "Your account was updated.")
-		return redirect("polls:index")
+		return redirect("polls:index", permanent=False)
 
 class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"
@@ -95,7 +95,7 @@ class CreatePollView(FormView):
 			choice = Choice(for_poll_id=question.id, option=choice_form.cleaned_data["option"])
 			choice.save()
 			
-		return redirect("polls:index")
+		return redirect("polls:index", permanent=False)
 
 class UpdatePollView(FormView):
 	template_name = "polls/update_poll.html"
@@ -185,7 +185,7 @@ class UpdatePollView(FormView):
 								new_choice = Choice(for_poll_id=self.question.id, option=choice_form.cleaned_data["option"])
 								new_choice.save()
 			
-		return redirect("polls:index")
+		return redirect("polls:index", permanent=False)
 
 class DeletePollView(RedirectView):
 	permanent = False
@@ -235,7 +235,7 @@ class VotePollView(FormView):
 		selected_choice.voted_by.add(self.request.user)
 		selected_choice.votes = selected_choice.voted_by.count()
 		selected_choice.save()
-		return redirect("polls:index")
+		return redirect("polls:index", permanent=False)
 
 class ResultsPollView(DetailView):
 	template_name = "polls/results.html"
