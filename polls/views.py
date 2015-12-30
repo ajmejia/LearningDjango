@@ -47,8 +47,8 @@ class UserAccountView(UpdateView):
 	model = User
 	form_class = UserChangeForm
 
-	@method_decorator(user_account_ownership_required)
 	@method_decorator(login_required)
+	@method_decorator(user_account_ownership_required)
 	def dispatch(self, request, *args, **kwargs):
 		return super(UserAccountView, self).dispatch(request, *args, **kwargs)
 
@@ -62,6 +62,7 @@ class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"
 
 	@method_decorator(login_required)
+	@method_decorator(permission_required(["polls.add_poll", "polls.add_choice"]))
 	def distpatch(self, request, *args, **kwargs):
 		return super(CreatePollView, self).dispatch(request, *args, **kwargs)
 
@@ -100,9 +101,9 @@ class CreatePollView(FormView):
 class UpdatePollView(FormView):
 	template_name = "polls/update_poll.html"
 
-	@method_decorator(poll_no_votes_required)
-	@method_decorator(user_poll_ownership_required)
 	@method_decorator(login_required)
+	@method_decorator(user_poll_ownership_required)
+	@method_decorator(poll_no_votes_required)
 	def dispatch(self, request, *args, **kwargs):
 		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
 		
@@ -191,9 +192,9 @@ class DeletePollView(RedirectView):
 	permanent = False
 	pattern_name = "polls:index"
 
-	@method_decorator(poll_no_votes_required)
-	@method_decorator(user_poll_ownership_required)
 	@method_decorator(login_required)
+	@method_decorator(user_poll_ownership_required)
+	@method_decorator(poll_no_votes_required)
 	def dispatch(self, request, *args, **kwargs):
 		question = Poll.objects.get(pk=kwargs.pop("pk"))
 		question.delete()
@@ -213,8 +214,8 @@ class VotePollView(FormView):
 	template_name = "polls/vote.html"
 	form_class = VoteForm
 
-	@method_decorator(permission_required("polls.vote", raise_exception=True))
 	@method_decorator(login_required)
+	@method_decorator(permission_required("polls.vote", raise_exception=True))
 	def dispatch(self, request, *args, **kwargs):
 		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
 		self.choices = self.question.get_choices(for_form=True)
@@ -241,8 +242,8 @@ class ResultsPollView(DetailView):
 	template_name = "polls/results.html"
 	model = Poll
 
-	@method_decorator(user_vote_required)
-	@method_decorator(permission_required("polls.view_results"))
 	@method_decorator(login_required)
+	@method_decorator(permission_required("polls.view_results"))
+	@method_decorator(user_vote_required)
 	def dispatch(self, request, *args, **kwargs):
 		return super(ResultsPollView, self).dispatch(request, *args, **kwargs)

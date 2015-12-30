@@ -1,6 +1,5 @@
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
 
 def user_account_ownership_required(func):
 	def check_ownership(request, *args, **kwargs):
