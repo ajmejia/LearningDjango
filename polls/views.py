@@ -8,7 +8,7 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.contrib.auth.models import Permission
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
@@ -100,13 +100,14 @@ class CreatePollView(FormView):
 class UpdatePollView(FormView):
 	template_name = "polls/update_poll.html"
 
+	@method_decorator(user_poll_ownership_required)
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
 		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
 		
 		self.initial_question = {"question": self.question.question}
 		self.choices = self.question.choice_set.all()
-		self.initial_choices_values = [c.choice for c in self.choices]
+		self.initial_choices_values = [c.option for c in self.choices]
 		self.num_choices = self.choices.count()
 		
 		self.initial_formset = [{"form-TOTAL_FORMS": self.num_choices,
@@ -116,8 +117,8 @@ class UpdatePollView(FormView):
 
 		self.initial_choices = []
 		for i in xrange(self.num_choices):
-			self.initial_choices.append(dict(choice=self.choices[i].choice))
-			self.initial_formset.append({"form-"+str(i)+"-choice": self.choices[i].choice})
+			self.initial_choices.append(dict(option=self.choices[i].option))
+			self.initial_formset.append({"form-"+str(i)+"-choice": self.choices[i].option})
 
 		return super(UpdatePollView, self).dispatch(request, *args, **kwargs)
 
@@ -149,14 +150,14 @@ class UpdatePollView(FormView):
 			self.question.question = question_form.cleaned_data["question"]
 			self.question.save()
 
-		current_choices = [d["choice"] for d in choice_forms.cleaned_data]
+		current_choices = [d["option"] for d in choice_forms.cleaned_data]
 		current_choices_num = choice_forms.total_form_count()
 
 		if choice_forms.has_changed():
 			if self.num_choices == current_choices_num:
 				for i, choice_form in enumerate(choice_forms):
 					if choice_form.has_changed():
-						self.choices[i].choice = choice_form.cleaned_data["choice"]
+						self.choices[i].option = choice_form.cleaned_data["option"]
 						self.choices[i].save()
 			else:
 				diff_num = current_choices_num - self.num_choices
@@ -170,17 +171,17 @@ class UpdatePollView(FormView):
 							diff_num += 1
 						i += 1
 					for i, choice_form in enumerate(choice_forms):
-						if not choice_form.cleaned_data["choice"] in self.initial_choices_values:
-							self.choices[i].choice = choice_form.cleaned_data["choice"]
+						if not choice_form.cleaned_data["option"] in self.initial_choices_values:
+							self.choices[i].option = choice_form.cleaned_data["option"]
 							self.choices[i].save()
 				else:
 					for i, choice_form in enumerate(choice_forms):
 						if choice_form.has_changed():
 							try:
-								self.choices[i].choice = choice_form.cleaned_data["choice"]
+								self.choices[i].option = choice_form.cleaned_data["option"]
 								self.choices[i].save()
 							except IndexError:
-								new_choice = Choice(for_question_id=self.question.id, choice=choice_form.cleaned_data["choice"])
+								new_choice = Choice(for_poll_id=self.question.id, option=choice_form.cleaned_data["option"])
 								new_choice.save()
 			
 		return redirect("polls:index")
@@ -189,6 +190,7 @@ class DeletePollView(RedirectView):
 	permanent = False
 	pattern_name = "polls:index"
 
+	@method_decorator(user_poll_ownership_required)
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
 		question = Poll.objects.get(pk=kwargs.pop("pk"))
@@ -196,17 +198,6 @@ class DeletePollView(RedirectView):
 		return super(DeletePollView, self).dispatch(request, *args, **kwargs)
 
 class IndexView(ListView):
-	"""
-	ListView: Method flowchart:
-		1.dispatch()
-		2.http_method_not_allowed()
-		3.get_template_names()
-		4.get_queryset()
-		5.get_context_object_name()
-		6.get_context_data()
-		7.get()
-		8.render_to_response()
-	"""
 	model = Poll
 	template_name = "polls/index.html"
 	context_object_name = "poll_list"
@@ -220,6 +211,7 @@ class VotePollView(FormView):
 	template_name = "polls/vote.html"
 	form_class = VoteForm
 
+	@method_decorator(permission_required("polls.vote", raise_exception=True))
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
 		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
@@ -238,7 +230,8 @@ class VotePollView(FormView):
 
 	def form_valid(self, form):
 		selected_choice = self.question.choice_set.get(pk=form.cleaned_data.get("option_set"))
-		selected_choice.votes += 1
+		selected_choice.voted_by.add(self.request.user)
+		selected_choice.votes = selected_choice.voted_by.count()
 		selected_choice.save()
 		return redirect("polls:index")
 
@@ -246,6 +239,8 @@ class ResultsPollView(DetailView):
 	template_name = "polls/results.html"
 	model = Poll
 
+	@method_decorator(user_vote_required)
+	@method_decorator(permission_required("polls.view_results"))
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
-		return super(ResultsPollView, self).dispatch(*args, **kwargs)
+		return super(ResultsPollView, self).dispatch(request, *args, **kwargs)

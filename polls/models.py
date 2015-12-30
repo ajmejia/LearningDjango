@@ -43,18 +43,21 @@ class Poll(models.Model):
 
 	def __unicode__(self):
 		return force_unicode(self.question)
-
-	def _get_choices_query(self):
-		return self.choice_set.all()
 		
 	def get_choices(self, for_form=False):
 		if for_form:
-			return [(c.pk, c.option) for c in self._get_choices_query()]
+			return [(c.pk, c.option) for c in self.choice_set.all()]
 		else:
-			return [c.option for c in self._get_choices_query()]
+			return [c.option for c in self.choice_set.all()]
 
 	def get_total_votes(self):
-		return sum([choice.votes for choice in self._get_choices_query()])
+		return sum([choice.votes for choice in self.choice_set.all()])
+
+	def get_voters(self):
+		return [user.id for user in choice.voted_by.all() for choice in self.choice_set.all()]
+
+	def get_voters_id(self):
+		return [user.id for user in choice.voted_by.all() for choice in self.choice_set.all()]
 
 class Choice(models.Model):
 	option = models.CharField(max_length=CHOICE_MAX_LENGTH)
