@@ -13,6 +13,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from .models import User, Choice, Poll, PollForm, ChoiceFormset, VoteForm
+from .permission_tests import *
 
 class SignupView(CreateView):
 	template_name = "polls/signup.html"
@@ -46,6 +47,7 @@ class UserAccountView(UpdateView):
 	model = User
 	form_class = UserChangeForm
 
+	@method_decorator(user_account_ownership_required)
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
 		return super(UserAccountView, self).dispatch(request, *args, **kwargs)
