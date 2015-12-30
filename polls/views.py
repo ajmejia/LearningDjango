@@ -13,7 +13,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from .models import User, Choice, Poll, PollForm, ChoiceFormset, VoteForm
-from .permission_tests import *
+from .auth import *
 
 class SignupView(CreateView):
 	template_name = "polls/signup.html"
@@ -100,6 +100,7 @@ class CreatePollView(FormView):
 class UpdatePollView(FormView):
 	template_name = "polls/update_poll.html"
 
+	@method_decorator(poll_no_votes_required)
 	@method_decorator(user_poll_ownership_required)
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):
@@ -190,6 +191,7 @@ class DeletePollView(RedirectView):
 	permanent = False
 	pattern_name = "polls:index"
 
+	@method_decorator(poll_no_votes_required)
 	@method_decorator(user_poll_ownership_required)
 	@method_decorator(login_required)
 	def dispatch(self, request, *args, **kwargs):

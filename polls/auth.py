@@ -24,3 +24,11 @@ def user_vote_required(func):
 		else:
 			raise PermissionDenied
 	return check_user_voted
+
+def poll_no_votes_required(func):
+	def check_no_votes(request, *args, **kwargs):
+		if request.user.poll_set.get(pk=kwargs.get("pk")).choice_set.filter(votes__gt=0).count() == 0:
+			return func(request, *args, **kwargs)
+		else:
+			raise PermissionDenied
+	return check_no_votes
