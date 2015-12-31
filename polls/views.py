@@ -8,7 +8,6 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.contrib.auth.models import Permission
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
@@ -47,7 +46,7 @@ class UserAccountView(UpdateView):
 	model = User
 	form_class = UserChangeForm
 
-	@method_decorator(login_required)
+	@method_decorator(login_required(message="You need to be logged in before updating your account."))
 	@method_decorator(user_account_ownership_required)
 	def dispatch(self, request, *args, **kwargs):
 		return super(UserAccountView, self).dispatch(request, *args, **kwargs)
@@ -61,7 +60,7 @@ class UserAccountView(UpdateView):
 class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"
 
-	@method_decorator(login_required)
+	@method_decorator(login_required(message="You need to be logged in before opening a new poll."))
 	@method_decorator(permission_required(["polls.add_poll", "polls.add_choice"]))
 	def distpatch(self, request, *args, **kwargs):
 		return super(CreatePollView, self).dispatch(request, *args, **kwargs)
@@ -101,7 +100,7 @@ class CreatePollView(FormView):
 class UpdatePollView(FormView):
 	template_name = "polls/update_poll.html"
 
-	@method_decorator(login_required)
+	@method_decorator(login_required(message="You need to be logged in before updating your polls."))
 	@method_decorator(user_poll_ownership_required)
 	@method_decorator(poll_no_votes_required)
 	def dispatch(self, request, *args, **kwargs):
@@ -192,7 +191,7 @@ class DeletePollView(RedirectView):
 	permanent = False
 	pattern_name = "polls:index"
 
-	@method_decorator(login_required)
+	@method_decorator(login_required(message="You need to be logged in before deleting any poll."))
 	@method_decorator(user_poll_ownership_required)
 	@method_decorator(poll_no_votes_required)
 	def dispatch(self, request, *args, **kwargs):
@@ -214,8 +213,9 @@ class VotePollView(FormView):
 	template_name = "polls/vote.html"
 	form_class = VoteForm
 
-	@method_decorator(login_required)
+	@method_decorator(login_required(message="You need to be logged in before voting in any poll."))
 	@method_decorator(permission_required("polls.vote", raise_exception=True))
+	@method_decorator(user_no_vote_required)
 	def dispatch(self, request, *args, **kwargs):
 		self.question = Poll.objects.get(pk=kwargs.pop("pk"))
 		self.choices = self.question.get_choices(for_form=True)
@@ -242,7 +242,7 @@ class ResultsPollView(DetailView):
 	template_name = "polls/results.html"
 	model = Poll
 
-	@method_decorator(login_required)
+	@method_decorator(login_required(message="You need to be logged in before you can view any results."))
 	@method_decorator(permission_required("polls.view_results"))
 	@method_decorator(user_vote_required)
 	def dispatch(self, request, *args, **kwargs):
