@@ -9,9 +9,9 @@ from django.views.generic.edit import FormView, CreateView, UpdateView, DeleteVi
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Permission
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 
-from .models import User, Choice, Poll, PollForm, ChoiceFormset, VoteForm
+from .models import User, Choice, Poll, UserChangeForm, PollForm, ChoiceFormset, VoteForm
 from .auth import *
 
 class SignupView(CreateView):

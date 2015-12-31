@@ -68,6 +68,29 @@ class Choice(models.Model):
 	def __unicode__(self):
 		return force_unicode(self.option)
 
+class UserChangeForm(forms.ModelForm):
+	password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput, help_text="Leave this field blank to keep the current password.")
+	confirm_password = forms.CharField(max_length=PASSWORD_MAX_LENGTH, required=False, widget=forms.PasswordInput)
+
+	class Meta:
+		model = User
+		fields = ("first_name", "last_name", "username", "email", "password", "confirm_password",)
+
+	def clean(self):
+		super(UserAccountForm, self).clean()
+		data = self.cleaned_data.get("confirm_password")
+		password = self.cleaned_data.get("password")
+		if data and password and data != password:
+				raise forms.ValidationError("Passwords do not match.")
+		
+	def save(self, commit=True):
+		user = super(UserAccountForm, self).save(commit=False)
+		password = self.cleaned_data.get("password")
+		if password: user.set_password(password)
+		if commit:
+			user.save()
+		return user
+
 class PollForm(forms.ModelForm):
 
 	class Meta:
