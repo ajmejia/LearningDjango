@@ -103,7 +103,7 @@ class ChoiceForm(forms.ModelForm):
 		model = Choice
 		fields = ("option",)
 
-ChoiceFormset = forms.formset_factory(ChoiceForm, extra=0, min_num=2, validate_min=True)
+ChoiceFormset = forms.formset_factory(ChoiceForm, extra=0, min_num=CHOICE_MIN_FIELDS, max_num=CHOICE_MAX_FIELDS, validate_min=True, validate_max=True)
 
 class VoteForm(forms.Form):
 	option_set = forms.ChoiceField(choices=[], widget=forms.RadioSelect)

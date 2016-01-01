@@ -85,10 +85,14 @@ input[type="button"].add-form-row {
   background-color: #2c89a0; }
   input[type="button"].add-form-row:hover, input[type="button"].add-form-row:focus {
     background-color: #216778; }
+  input[type="button"].add-form-row:disabled {
+    background-color: #808080; }
 
 input[type="button"].delete-form-row {
   background-color: #d35f5f; }
   input[type="button"].delete-form-row:hover, input[type="button"].delete-form-row:focus {
     background-color: #c83737; }
+  input[type="button"].delete-form-row:disabled {
+    background-color: #808080; }
 
 /*# sourceMappingURL=form_style.css.map */

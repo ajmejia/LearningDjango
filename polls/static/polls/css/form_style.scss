@@ -102,11 +102,17 @@ input[type="button"].add-form-row {
 	&:hover,&:focus {
 		background-color: darken($highlight, 10%);
 	}
+	&:disabled {
+		background-color: $dark;
+	}
 }
 
 input[type="button"].delete-form-row {
 	background-color: $light;
 	&:hover,&:focus {
 		background-color: darken($light, 10%);
+	}
+	&:disabled {
+		background-color: $dark;
 	}
 }
