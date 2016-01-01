@@ -77,9 +77,6 @@ class CreatePollView(FormView):
 		else:
 			return self.form_invalid((question_form, choice_forms))
 
-	def get_form(self):
-		return PollForm(), ChoiceFormset()
-
 	def form_invalid(self, forms):
 		question_form, choice_forms = forms
 		return render(self.request, self.template_name, context={"question_form": question_form, "choice_forms": choice_forms})
