@@ -4,16 +4,8 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
-.clearfix:after {
-  visibility: hidden;
-  display: block;
-  font-size: 0;
-  content: " ";
-  clear: both;
-  height: 0; }
-
 body {
-  background-color: #f2f2f2;
+  background: #f2f2f2;
   font-family: 'Lato', sans-serif;
   color: #808080; }
   body h1 {
@@ -29,7 +21,7 @@ body {
       color: #2c89a0; }
 
 div, #navigation {
-  background-color: white; }
+  background: white; }
 
 #navigation {
   padding: 1rem 15%; }
@@ -52,7 +44,7 @@ div, #navigation {
       color: #2c89a0; }
 
 #flash-message-container {
-  background-color: #f2f2f2;
+  background: #f2f2f2;
   height: 2em;
   width: 100%;
   margin: 0;
@@ -67,7 +59,7 @@ div, #navigation {
   font-size: 1em;
   text-align: center;
   color: #00cc00;
-  background-color: #ccffcc; }
+  background: #ccffcc; }
 
 .warning {
   height: 100%;
@@ -78,7 +70,7 @@ div, #navigation {
   font-size: 1em;
   text-align: center;
   color: #cccc00;
-  background-color: #ffffcc; }
+  background: #ffffcc; }
 
 .error {
   height: 100%;
@@ -89,20 +81,22 @@ div, #navigation {
   font-size: 1em;
   text-align: center;
   color: #cc0000;
-  background-color: #ffcccc; }
+  background: #ffcccc; }
+
+.button-sm, .button-md, input[type="submit"], input[type="button"] {
+  color: white;
+  background: transparent;
+  outline: none;
+  border: none;
+  text-align: center;
+  transition: all 0.2s ease-in-out; }
 
 .button-sm {
+  width: 3.5rem;
   margin: 2px 5px;
   padding: 0.25rem 0.5rem;
-  display: block;
-  text-align: center;
   font-size: 0.7rem;
-  color: white;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  border-radius: 0.25rem;
-  transition: all 0.2s ease-in-out; }
+  border-radius: 0.2rem; }
   .button-sm.add {
     background: #2c89a0; }
     .button-sm.add:hover, .button-sm.add:focus {
@@ -113,36 +107,36 @@ div, #navigation {
     color: white; }
     .button-sm.del:hover, .button-sm.del:focus {
       background: #c83737; }
-  .button-sm.disabled {
+  .button-sm.disabled, .button-sm:disabled {
     pointer-events: none;
     cursor: default;
     background: #808080; }
 
-.button-md {
+.button-md, input[type="submit"] {
+  width: 5rem;
   margin: 5px 7px;
   padding: 0.5rem 1rem;
-  display: block;
-  text-align: center;
   font-size: 1rem;
-  color: white;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease-in-out; }
-  .button-md.add {
-    background-color: #2c89a0; }
-    .button-md.add:hover, .button-md.add:focus {
+  border-radius: 0.25rem; }
+  .button-md.add, input[type="submit"].add {
+    background: #2c89a0; }
+    .button-md.add:hover, .button-md.add:focus, input[type="submit"].add:hover, input[type="submit"].add:focus {
       color: white;
       background: #216778; }
-  .button-md.del {
-    background-color: #d35f5f; }
-    .button-md.del:hover, .button-md.del:focus {
+  .button-md.del, input[type="submit"].del {
+    background: #d35f5f; }
+    .button-md.del:hover, .button-md.del:focus, input[type="submit"].del:hover, input[type="submit"].del:focus {
       color: white;
       background: #c83737; }
-  .button-md.disabled {
+  .button-md.disabled, input[type="submit"].disabled {
     pointer-events: none;
     cursor: default;
     background: #808080; }
+
+input[type="submit"] {
+  background: #2c89a0; }
+  input[type="submit"]:hover, input[type="submit"]:focus {
+    color: white;
+    background: #216778; }
 
 /*# sourceMappingURL=base_style.css.map */

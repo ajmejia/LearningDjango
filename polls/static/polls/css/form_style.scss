@@ -15,104 +15,49 @@
 		padding: 0;
 	}
 	label {
+		margin-right: 10px;
 		font-weight: 300;
-	}
-	.field-wrapper,.dynamic-form {
-		margin: 1.5rem 0 0 0;
-		.errorlist,#id_choice_set {
-			margin-bottom: 0;
-			padding: 0;
-			display: inline;
-			list-style: none;
-			label {
-				font-weight: 400;
-			}
-		}
-		#id_choice_set li {
-			margin: 1rem auto;
-		}
-		.error-field {
-			height: 1rem;
-			width: 100%;
-			max-width: 100%;
-			color: $error;
-		}
 	}
 	div:last-of-type {
 		margin-bottom: 2.5rem;
 	}
 }
-
-input[type="text"], input[type="email"], input[type="password"] {
-	width: 100%;
-	max-width: 100%;
+.field-wrapper,.dynamic-wrapper,.add-wrapper {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	.error-field {
+		height: 1rem;
+		width: 100%;
+		max-width: 100%;
+		color: $error;
+	}
+}
+.add-wrapper {
+	justify-content: flex-end;
+}
+.errorlist,#id_choice_set {
+	padding: 0;
+	display: inline;
+	list-style: none;
+	&li {
+		margin: 1rem auto;
+	}
+}
+input[type="text"],input[type="email"],input[type="password"] {
 	height: 1.5rem;
 	margin: 1.5rem 0 0 0;
 	padding: 0;
-	color: $dark;
 	border: none;
 	border-bottom: 1.5px solid $dark;
-	transition: 0.5s;
+	flex-grow: 2;
+	color: $dark;
+	transition: all 0.2s ease-in-out;
 	&:focus {
 		outline: none;
 		border: none;
 		border-bottom: 1.5px solid $light;
-	}
-}
-
-input[type="submit"], input[type="button"], .cancel {
-	width: 5rem;
-	padding: 0.5rem 0.5rem;
-	outline: none;
-	border: none;
-	border-radius: 4px;
-	text-align: center;
-	text-decoration: none;
-	font-size: 1rem;
-	color: white;
-	transition: 0.5s;
-}
-
-input[type="submit"] {
-	background-color: $highlight;
-	&:hover,&:focus {
-		background-color: darken($highlight, 10%);
-	}
-}
-
-.cancel {
-	border-radius: 4px;
-	transition: 0.5s;
-	background-color: $light;
-	&:hover,&:focus {
-		color: white;
-		background-color: darken($light, 10%);
-	}
-}
-
-input[type="button"] {
-	width: 3.5rem;
-	padding: 0.5rem 0;
-	float: right;
-	font-size: 0.7rem;
-}
-
-input[type="button"].add-form-row {
-	background-color: $highlight;
-	&:hover,&:focus {
-		background-color: darken($highlight, 10%);
-	}
-	&:disabled {
-		background-color: $dark;
-	}
-}
-
-input[type="button"].delete-form-row {
-	background-color: $light;
-	&:hover,&:focus {
-		background-color: darken($light, 10%);
-	}
-	&:disabled {
-		background-color: $dark;
 	}
 }

@@ -6,18 +6,8 @@
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
-
-.clearfix:after {
-	visibility: hidden;
-	display: block;
-	font-size: 0;
-	content: " ";
-	clear: both;
-	height: 0;
-}
-
 body {
-	background-color: $background;
+	background: $background;
 	font-family: 'Lato', sans-serif;
 	h1 {
 		margin-top: 0;
@@ -36,7 +26,7 @@ body {
 	}
 }
 div, #navigation {
-	background-color: white;
+	background: white;
 }
 #navigation {
 	padding: 1rem 15%;
@@ -63,7 +53,7 @@ div, #navigation {
 	}
 }
 #flash-message-container {
-	background-color: $background;
+	background: $background;
 	height: 2em;
 	width: 100%;
 	margin: 0;
@@ -78,7 +68,7 @@ div, #navigation {
 	font-size: 1em;
 	text-align: center;
 	color: $success;
-	background-color: $bg_success;
+	background: $bg_success;
 }
 .warning {
 	height: 100%;
@@ -89,7 +79,7 @@ div, #navigation {
 	font-size: 1em;
 	text-align: center;
 	color: $warning;
-	background-color: $bg_warning;
+	background: $bg_warning;
 }
 .error {
 	height: 100%;
@@ -100,21 +90,22 @@ div, #navigation {
 	font-size: 1em;
 	text-align: center;
 	color: $error;
-	background-color: $bg_error;
+	background: $bg_error;
 }
-
+.button-sm,.button-md,input[type="submit"],input[type="button"] {
+	color: white;
+	background: transparent;
+	outline: none;
+	border: none;
+	text-align: center;
+	transition: all 0.2s ease-in-out;
+}
 .button-sm {
+	width: 3.5rem;
 	margin: 2px 5px;
 	padding: 0.25rem 0.5rem;
-	display: block;
-	text-align: center;
 	font-size: 0.7rem;
-	color: white;
-	background-color: transparent;
-	border: none;
-	outline: none;
-	border-radius: 0.25rem;
-	transition: all 0.2s ease-in-out;
+	border-radius: 0.2rem;
 	&.add {
 		background: $highlight;
 		&:hover,&:focus {
@@ -129,34 +120,27 @@ div, #navigation {
 			background: darken($light, 10%);
 		}
 	}
-	&.disabled {
+	&.disabled,&:disabled {
 		pointer-events: none;
 		cursor: default;
 		background: $dark;
 	}
 }
-
-.button-md {
+.button-md,input[type="submit"] {
+	width: 5rem;
 	margin: 5px 7px;
 	padding: 0.5rem 1rem;
-	display: block;
-	text-align: center;
 	font-size: 1rem;
-	color: white;
-	background-color: transparent;
-	border: none;
-	outline: none;
-	border-radius: 0.5rem;
-	transition: all 0.2s ease-in-out;
+	border-radius: 0.25rem;
 	&.add {
-		background-color: $highlight;
+		background: $highlight;
 		&:hover,&:focus {
 			color: white;
 			background: darken($highlight, 10%);
 		}
 	}
 	&.del {
-		background-color: $light;
+		background: $light;
 		&:hover,&:focus {
 			color: white;
 			background: darken($light, 10%);
@@ -166,5 +150,12 @@ div, #navigation {
 		pointer-events: none;
 		cursor: default;
 		background: $dark;
+	}
+}
+input[type="submit"] {
+	background: $highlight;
+	&:hover,&:focus {
+		color: white;
+		background: darken($highlight, 10%);
 	}
 }

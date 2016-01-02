@@ -24,7 +24,7 @@
 	<form action="{% url 'polls:create-poll' %}" method="post">
 		{% csrf_token %}
 		<div class="field-wrapper">
-			<label for="{{ question_form.question.label }}">{{ question_form.question.label }}</label>
+			<label>{{ question_form.question.label }}:</label>
 			{{ question_form.question }}
 			<div class="error-field">
 				{{ question_form.question.errors }}
@@ -32,19 +32,22 @@
 		</div>
 		<div id="formset-placeholder">
 			{{ choice_forms.management_form }}
-			<label>Choices</label>
-			<input type="button" class="add-form-row" value="add">
+			<div class="add-wrapper">
+				<input type="button" class="button-sm add" value="add">
+			</div>
 			{% for choice_form in choice_forms.forms %}
-				<div class="dynamic-form">
-						<input type="button" class="delete-form-row" value="delete">
+				<div class="dynamic-wrapper">
+						<label>{{ choice_form.option.label }} #{{ forloop.counter }}:</label>
 						{{ choice_form.option }}
-						<div class="error-field">
-							{{ choice_form.option.errors }}
-						</div>
+						<input type="button" class="button-sm del" value="delete">
+					<div class="error-field">
+						{{ choice_form.option.errors }}
+					</div>
 				</div>
 			{% endfor %}
 		</div>
 		<input type="submit" value="Create"/>
+		<a href="{% url 'polls:index' %}" class="button-md del">Cancel</a>
 	</form>
 {% endblock %}
 
@@ -59,9 +62,9 @@
 		    },
 		    cacheDom: function(){
 		      this.formsetSelector = "#formset-placeholder";
-		      this.choiceSelector = ".dynamic-form";
-		      this.addSelector = ".add-form-row";
-		      this.delSelector = ".delete-form-row";
+		      this.choiceSelector = ".dynamic-wrapper";
+		      this.addSelector = ".add";
+		      this.delSelector = ".del";
 		      
 		      this.$choicesPlaceHolder = $(this.formsetSelector);
 		      // find add button
@@ -91,11 +94,15 @@
 		      this.$choicesPlaceHolder.delegate(this.delSelector, "click", this.delForm.bind(this));
 		    },
 		    updForm: function() {
+					var $labels = this.$choicesPlaceHolder.find("label");
 		      var $fields = this.$choicesPlaceHolder.find("input[type='text']");
 		      var newTotal = $fields.length
 		      
 		      for(var i = 0; i < newTotal; i++) {
+						var label = $labels.get(i);
 		        var field = $fields.get(i);
+		        
+		        $(label).html("Option #" + (i+1) + ":");
 		        $(field).attr("id", "id_form-" + i + "-option");
 		        $(field).attr("name", "form-" + i + "-option");
 		      }
