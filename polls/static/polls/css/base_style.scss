@@ -30,23 +30,25 @@ div, #navigation {
 }
 #navigation {
 	padding: 1rem 15%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	#logo {
-		float: left;
-		font-weight: 700;
+		padding: 0.2rem 0.5rem;
+		font-weight: 300;
 		font-size: 1em;
 		text-transform: uppercase;
 		text-decoration: none;
-		letter-spacing: 0.2em;
 		color: $dark;
+		border: 1px solid $dark;
+		border-radius: 0.15rem;
 		}
 	nav {
-		float: right;
 		a {
 			margin: 0 0.7em;
 			font-size: 1em;
 			}
 		#username {
-			margin: 0 2em;
 			font-weight: 700;
 			color: $highlight;
 		}

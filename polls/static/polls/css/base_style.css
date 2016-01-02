@@ -24,24 +24,25 @@ div, #navigation {
   background: white; }
 
 #navigation {
-  padding: 1rem 15%; }
+  padding: 1rem 15%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; }
   #navigation #logo {
-    float: left;
-    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    font-weight: 300;
     font-size: 1em;
     text-transform: uppercase;
     text-decoration: none;
-    letter-spacing: 0.2em;
-    color: #808080; }
-  #navigation nav {
-    float: right; }
-    #navigation nav a {
-      margin: 0 0.7em;
-      font-size: 1em; }
-    #navigation nav #username {
-      margin: 0 2em;
-      font-weight: 700;
-      color: #2c89a0; }
+    color: #808080;
+    border: 1px solid #808080;
+    border-radius: 0.15rem; }
+  #navigation nav a {
+    margin: 0 0.7em;
+    font-size: 1em; }
+  #navigation nav #username {
+    font-weight: 700;
+    color: #2c89a0; }
 
 #flash-message-container {
   background: #f2f2f2;
