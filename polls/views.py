@@ -61,7 +61,7 @@ class CreatePollView(FormView):
 	template_name = "polls/create_poll.html"
 
 	@method_decorator(login_required(message="You need to be logged in before opening a new poll."))
-	@method_decorator(permission_required(["polls.add_poll", "polls.add_choice"]))
+	@method_decorator(permission_required(["polls.add_poll", "polls.add_choice"], raise_exception=True))
 	def distpatch(self, request, *args, **kwargs):
 		return super(CreatePollView, self).dispatch(request, *args, **kwargs)
 
@@ -240,7 +240,7 @@ class ResultsPollView(DetailView):
 	model = Poll
 
 	@method_decorator(login_required(message="You need to be logged in before you can view any results."))
-	@method_decorator(permission_required("polls.view_results"))
+	@method_decorator(permission_required("polls.view_results", raise_exception=True))
 	@method_decorator(user_vote_required)
 	def dispatch(self, request, *args, **kwargs):
 		return super(ResultsPollView, self).dispatch(request, *args, **kwargs)
