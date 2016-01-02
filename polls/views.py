@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Permission
 from django.contrib.auth.forms import UserCreationForm
 
+from .models import CHOICE_MIN_FIELDS, CHOICE_MAX_FIELDS
 from .models import User, Choice, Poll, UserChangeForm, PollForm, ChoiceFormset, VoteForm
 from .auth import *
 
@@ -110,8 +111,8 @@ class UpdatePollView(FormView):
 		
 		self.initial_formset = [{"form-TOTAL_FORMS": self.num_choices,
 		                         "form-INITIAL_FORMS": self.num_choices,
-		                         "form-MIN_NUM_FORMS": 2,
-		                         "form-MAX_NUM_FORMS": 1000}]
+		                         "form-MIN_NUM_FORMS": CHOICE_MIN_FIELDS,
+		                         "form-MAX_NUM_FORMS": CHOICE_MAX_FIELDS}]
 
 		self.initial_choices = []
 		for i in xrange(self.num_choices):
