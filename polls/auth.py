@@ -57,7 +57,7 @@ def permission_required(perm, login_url=None, raise_exception=False, message=Non
 
 def user_account_ownership_required(func):
 	def check_ownership(request, *args, **kwargs):
-		if request.user.pk == int(kwargs.get("pk")) or request.user.is_superuser:
+		if request.user.is_superuser or request.user.pk == int(kwargs.get("pk")):
 			return func(request, *args, **kwargs)
 		else:
 			messages.add_message(request, messages.ERROR, "You cannot change others' account.")
@@ -66,7 +66,7 @@ def user_account_ownership_required(func):
 
 def user_poll_ownership_required(func):
 	def check_ownership(request, *args, **kwargs):
-		if request.user.poll_set.filter(pk=kwargs.get("pk")).count() == 1 or request.user.is_superuser:
+		if request.user.is_superuser or request.user.poll_set.filter(pk=kwargs.get("pk")).count() == 1:
 			return func(request, *args, **kwargs)
 		else:
 			messages.add_message(request, messages.ERROR, "You cannot change/delete others' polls.")
@@ -75,7 +75,7 @@ def user_poll_ownership_required(func):
 
 def user_vote_required(func):
 	def check_user_voted(request, *args, **kwargs):
-		if request.user.choice_set.all().filter(for_poll_id=kwargs.get("pk")).count() == 1 or request.user.is_superuser:
+		if request.user.is_superuser or request.user.choice_set.all().filter(for_poll_id=kwargs.get("pk")).count() == 1:
 			return func(request, *args, **kwargs)
 		else:
 			messages.add_message(request, messages.ERROR, "Make your vote first.")
@@ -84,7 +84,7 @@ def user_vote_required(func):
 
 def poll_no_votes_required(func):
 	def check_no_votes(request, *args, **kwargs):
-		if request.user.poll_set.get(pk=kwargs.get("pk")).choice_set.filter(votes__gt=0).count() == 0 or request.user.is_superuser:
+		if request.user.is_superuser or request.user.poll_set.get(pk=kwargs.get("pk")).choice_set.filter(votes__gt=0).count() == 0:
 			return func(request, *args, **kwargs)
 		else:
 			messages.add_message(request, messages.ERROR, "The poll has already started.")
@@ -93,7 +93,7 @@ def poll_no_votes_required(func):
 
 def user_no_vote_required(func):
 	def check_user_no_voted(request, *args, **kwargs):
-		if Poll.objects.get(pk=kwargs.get("pk")).choice_set.filter(voted_by__id=request.user.pk).count() == 0 or request.user.is_superuser:
+		if request.user.is_superuser or Poll.objects.get(pk=kwargs.get("pk")).choice_set.filter(voted_by__id=request.user.pk).count() == 0:
 			return func(request, *args, **kwargs)
 		else:
 			messages.add_message(request, messages.WARNING, "You already voted here.")
