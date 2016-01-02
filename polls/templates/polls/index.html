@@ -28,8 +28,13 @@
 				</div>
 			</div>
 			<div class="actions">
-				<a href="{% url 'polls:update-poll' poll.pk %}" class="button-sm add">Update</a>
-				<a href="{% url 'polls:delete-poll' poll.pk %}" onclick="return confirm('Are you sure?')" class="button-sm del">Delete</a>
+				{% if user.is_authenticated and poll.get_total_votes == 0 and poll.opened_by == user or user.is_superuser %}
+					<a href="{% url 'polls:update-poll' poll.pk %}" class="button-sm add">Update</a>
+					<a href="{% url 'polls:delete-poll' poll.pk %}" class="button-sm del">Delete</a>
+				{% else %}
+					<a href="{% url 'polls:update-poll' poll.pk %}" class="button-sm disabled">Update</a>
+					<a href="{% url 'polls:delete-poll' poll.pk %}" class="button-sm disabled">Delete</a>
+				{% endif %}
 			</div>
 		{% endfor %}
 	{% else %}
