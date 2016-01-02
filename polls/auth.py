@@ -96,6 +96,6 @@ def user_no_vote_required(func):
 		if Poll.objects.get(pk=kwargs.get("pk")).choice_set.filter(voted_by__id=request.user.pk).count() == 0 or request.user.is_superuser:
 			return func(request, *args, **kwargs)
 		else:
-			messages.add_message(request, messages.ERROR, "You already voted here.")
+			messages.add_message(request, messages.WARNING, "You already voted here.")
 			return redirect("polls:results", permanent=False, *args, **kwargs)
 	return check_user_no_voted

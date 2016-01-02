@@ -233,7 +233,7 @@ class VotePollView(FormView):
 		selected_choice.voted_by.add(self.request.user)
 		selected_choice.votes = selected_choice.voted_by.count()
 		selected_choice.save()
-		return redirect("polls:index", permanent=False)
+		return redirect("polls:results", permanent=False, pk=self.question.pk)
 
 class ResultsPollView(DetailView):
 	template_name = "polls/results.html"
