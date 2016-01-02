@@ -77,14 +77,14 @@ class UserChangeForm(forms.ModelForm):
 		fields = ("first_name", "last_name", "username", "email", "password", "confirm_password",)
 
 	def clean(self):
-		super(UserAccountForm, self).clean()
+		super(UserChangeForm, self).clean()
 		data = self.cleaned_data.get("confirm_password")
 		password = self.cleaned_data.get("password")
 		if data and password and data != password:
 				raise forms.ValidationError("Passwords do not match.")
 		
 	def save(self, commit=True):
-		user = super(UserAccountForm, self).save(commit=False)
+		user = super(UserChangeForm, self).save(commit=False)
 		password = self.cleaned_data.get("password")
 		if password: user.set_password(password)
 		if commit:

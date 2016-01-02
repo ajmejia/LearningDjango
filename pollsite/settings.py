@@ -61,6 +61,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 ROOT_URLCONF = 'pollsite.urls'
 LOGIN_URL = "polls:login"
 LOGOUT_URL = "polls:logout"
