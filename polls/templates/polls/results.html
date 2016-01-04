@@ -16,46 +16,14 @@
 {% block page_title %}{{ poll.question }}{% endblock %}
 
 {% block page_body %}
-
-	<table data-total="{{ poll.get_total_votes }}">
-		<tr>
-	    <th id="choices-head">Choices</th>
-	    <th id="votes-head">Votes (%)</th>
-		</tr>
-
-	  <tr>
-	    <td class="choice-col"></td>
-	    <td class="bin-empty">
-	      <div class="scale">
-	        <span class="start">0%</span>
-	        <span class="half">50%</span>
-	        <span class="full">100%</span>
-	      </div>
-	    </td>
-	  </tr>
+	<div data-total="{{ poll.get_total_votes }}" class="histogram">
 		{% for choice in poll.choice_set.all %}
-			<tr>
-				<td class="choice-col">{{ choice.option }}</td>
-				<td class="bin-col"><div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" class="bin"></div></td>
-			</tr>
+			<div class="wrapper">
+				<div class="bin-empty">{{ choice.option }}</div>
+				<div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" id="choice_{{ choice.id }}" class="bin">{{ choice.option }}</div>
+			</div>
 		{% endfor %}
-	</table>
-	</br>
-	<a href="{% url 'polls:index' %}" class="go-back">Go back</a>
+	</div>
+	<a href="{% url 'polls:index' %}" class="button-md del">Go back</a>
 {% endblock %}
 
-{% block js %}
-	<script>
-		$(function() {
-		  var $table = $("table");
-		  
-		  var $total_votes = $table.data("total");
-		  var $bin_ids = $(".bin").map(function(i, bin){
-				return "#"+bin.id;
-			});
-		  $bin_ids.each(function(i, id){
-					$(id).animate({"width":($(id).data("votes")/$total_votes*100)+"%"}, 2000);
-				});
-		});
-	</script>
-{% endblock %}
