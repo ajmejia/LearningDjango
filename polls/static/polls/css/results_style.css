@@ -8,23 +8,34 @@
   border-radius: 5px;
   box-shadow: 0px 10px 5px #808080; }
 
-.histogram {
+#histogram {
   text-align: left;
   margin: 30px auto; }
 
 .wrapper {
   margin: 10px auto;
-  position: relative;
-  border: 2px solid black; }
-  .wrapper .bin-empty {
-    color: black; }
-  .wrapper .bin {
-    background: black;
-    color: white;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%; }
+  width: 100%;
+  height: 3rem;
+  position: relative; }
+  .wrapper p {
+    margin: 0;
+    padding: 1rem;
+    font-weight: 700; }
+
+.bin-empty {
+  height: 100%;
+  color: #808080;
+  background: #f2f2f2;
+  box-shadow: 0px 1px 2px #808080 inset; }
+
+.bin {
+  overflow: hidden;
+  width: 0%;
+  height: 100%;
+  color: white;
+  background: #2c89a0;
+  position: absolute;
+  top: 0;
+  left: 0; }
 
 /*# sourceMappingURL=results_style.css.map */

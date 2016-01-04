@@ -16,14 +16,32 @@
 {% block page_title %}{{ poll.question }}{% endblock %}
 
 {% block page_body %}
-	<div data-total="{{ poll.get_total_votes }}" class="histogram">
+	<div data-total="{{ poll.get_total_votes }}" id="histogram">
 		{% for choice in poll.choice_set.all %}
 			<div class="wrapper">
-				<div class="bin-empty">{{ choice.option }}</div>
-				<div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" id="choice_{{ choice.id }}" class="bin">{{ choice.option }}</div>
+				<div class="bin-empty">
+					<p>{{ choice.option }}</p>
+				</div>
+				<div data-votes="{{ choice.votes }}" id="choice_{{ choice.id }}" id="choice_{{ choice.id }}" class="bin">
+					<p>{{ choice.option }}</p>
+				</div>
 			</div>
 		{% endfor %}
 	</div>
 	<a href="{% url 'polls:index' %}" class="button-md del">Go back</a>
+{% endblock %}
+
+{% block js %}
+<script>
+	$(document).ready(function() {
+		var $hist = $("#histogram");
+		var totalVotes = $hist.data("total");
+
+		$hist.find("[id*=choice_]").each(function(i, id) {
+			var $binID = $hist.find(id);
+			$binID.animate({"width": ($binID.data("votes")/totalVotes*100)+"%"}, 1000);
+		});
+	});
+</script>
 {% endblock %}
 
