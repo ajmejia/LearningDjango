@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="eng">
   <head>
-    <!-- This will load the static tag used below to target the css file -->
     {% load staticfiles %}
     <title>Polls Site</title>
     <link rel="stylesheet" type="text/css" href="{% static 'polls/css/normalize.css' %}">
@@ -13,18 +12,17 @@
   </head>
   <body>
 		<header id="navigation">
-			<a href="{% url 'polls:index' %}" id="logo">polls</a>
-			<nav>
-				{% if user.is_authenticated %}
-					<a href="{% url 'polls:accounts' user.pk %}" id="username">{{ user.first_name|default:user.username }}</a>
-					<a href="{% url 'polls:create-poll' %}">Create</a>
-					<a href="#{# url 'polls:mines' user.pk #}">Mines</a>
-					<a href="{% url 'polls:logout' %}">Sign out</a>
-				{% else %}
-					<a href="{% url 'polls:signup' %}">Sign up</a>
-					<a href="{% url 'polls:login' %}">Sign in</a>
-				{% endif %}
-			</nav>
+				<a href="{% url 'polls:index' %}" id="logo">polls</a>
+				<nav>
+					{% if user.is_authenticated %}
+						<a href="{% url 'polls:accounts' user.pk %}" id="username">{{ user.first_name|default:user.username }}</a>
+						<a href="{% url 'polls:create-poll' %}">Create</a>
+						<a href="{% url 'polls:logout' %}">Sign out</a>
+					{% else %}
+						<a href="{% url 'polls:signup' %}">Sign up</a>
+						<a href="{% url 'polls:login' %}">Sign in</a>
+					{% endif %}
+				</nav>
 		</header>
 		<div id="flash-message-container">
 			{% block flash_messages_block %}
@@ -36,6 +34,23 @@
 				{% endblock %}
 			</div>
 		
+		<script>
+			$(function() {
+				var $DOM = $(document);
+				var $message = $DOM.find(".error,.warning,.success");
+				
+				if($message)
+					//$message.one("click", hideNow);
+					$DOM.one("mousemove", hideWithDelay);
+
+				//function hideNow(event) {
+					//$message.fadeOut(500);
+				//};
+				function hideWithDelay() {
+					$message.delay(4000).fadeOut(500);
+				};
+			});
+		</script>
 		{% block js %}
 		{% endblock %}
 	</body>

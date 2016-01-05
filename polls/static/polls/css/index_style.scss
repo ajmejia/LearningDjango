@@ -3,12 +3,6 @@
 #page-body {
 	min-height: 500px;
 	width: 70%;
-	margin: 0 auto;
-	margin-bottom: 100px;
-	padding: 1rem 2rem;
-	text-align: center;
-	border-radius: 5px;
-	box-shadow: 0px 10px 5px $dark;
 	.poll-container {
 		margin-top: 3rem;
 		padding-bottom: 4px;
@@ -34,7 +28,7 @@
 			}
 			.date {
 				margin: 2px 5px;
-				padding: 0.25rem 0.5rem;
+				padding: 0.25rem 0;
 				font-color: $light;
 			}
 			.voted {
@@ -49,14 +43,12 @@
 		}
 	}
 }
-
 .actions {
 	width: 100%;
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
 }
-
 #empty {
 	font-size: 2em;
 	font-weight: 700;

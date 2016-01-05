@@ -1,11 +1,6 @@
 #page-body {
-  width: 40%;
-  margin: 0 auto;
-  margin-bottom: 100px;
-  padding: 2em 2em;
-  text-align: left;
-  border-radius: 5px;
-  box-shadow: 0px 10px 5px #808080; }
+  width: 60%;
+  text-align: left; }
   #page-body #form-message-container {
     height: 2em;
     width: 100%;
@@ -32,11 +27,11 @@
 .add-wrapper {
   justify-content: flex-end; }
 
-.errorlist, #id_choice_set {
+.errorlist, #id_option_set {
   padding: 0;
   display: inline;
   list-style: none; }
-  .errorlistli, #id_choice_setli {
+  .errorlistli, #id_option_setli {
     margin: 1rem auto; }
 
 input[type="text"], input[type="email"], input[type="password"] {

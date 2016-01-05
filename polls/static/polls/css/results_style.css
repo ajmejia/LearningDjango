@@ -1,12 +1,6 @@
 #page-body {
   min-height: 700px;
-  width: 70%;
-  margin: 0 auto;
-  margin-bottom: 100px;
-  padding: 1rem 2rem;
-  text-align: center;
-  border-radius: 5px;
-  box-shadow: 0px 10px 5px #808080; }
+  width: 70%; }
 
 #histogram {
   text-align: left;
