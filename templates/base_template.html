@@ -4,7 +4,7 @@
     {% load staticfiles %}
     <title>Polls Site</title>
     <link rel="stylesheet" type="text/css" href="{% static 'polls/css/normalize.css' %}">
-    <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Lato:300,400,700'>
     <link rel="stylesheet" type="text/css" href="{% static 'polls/css/base_style.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     {% block add_styles %}
@@ -47,7 +47,7 @@
 					//$message.fadeOut(500);
 				//};
 				function hideWithDelay() {
-					$message.delay(4000).fadeOut(500);
+					$message.delay(4000).fadeOut("slow");
 				};
 			});
 		</script>
