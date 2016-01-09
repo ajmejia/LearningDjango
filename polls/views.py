@@ -165,7 +165,7 @@ class UpdatePollView(FormView):
 					i = 0
 					while diff_num < 0:
 						del_choice = self.choices[i]
-						if not del_choice.choice in current_choices:
+						if not del_choice.option in current_choices:
 							del_choice.delete()
 							diff_num += 1
 						i += 1
